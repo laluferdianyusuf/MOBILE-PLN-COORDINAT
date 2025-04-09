@@ -2,7 +2,7 @@
 
 # dependencies
 node_modules/
-
+.gitignore
 # Expo
 .expo/
 dist/
