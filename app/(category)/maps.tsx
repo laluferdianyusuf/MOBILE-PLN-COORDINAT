@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, Text, Alert, Pressable } from "react-native";
+import { View, Text, Alert, Pressable, ToastAndroid } from "react-native";
 import MapView, { Marker, Polyline, Callout, LatLng } from "react-native-maps";
 import * as Location from "expo-location";
 import { captureRef } from "react-native-view-shot";
@@ -46,7 +46,7 @@ export default function AngleMapScreen() {
   const [main, setMain] = useState(null);
   const [pointA, setPointA] = useState(null);
   const [pointB, setPointB] = useState(null);
-  const [angle, setAngle] = useState(null);
+  const [angle, setAngle] = useState<String | null>(null);
   const [currentLocation, setCurrentLocation] = useState<Coordinate | null>(
     null
   );
@@ -57,9 +57,11 @@ export default function AngleMapScreen() {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        alert("Izin lokasi ditolak");
+        ToastAndroid.show("Izin lokasi ditolak", ToastAndroid.SHORT);
         return;
       }
+
+      let firstUpdate = true;
 
       const langganan = await Location.watchPositionAsync(
         {
@@ -74,11 +76,14 @@ export default function AngleMapScreen() {
           };
           setCurrentLocation(position);
 
-          mapRef.current?.animateToRegion({
-            ...position,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-          });
+          if (firstUpdate) {
+            mapRef.current?.animateToRegion({
+              ...position,
+              latitudeDelta: 0.002,
+              longitudeDelta: 0.002,
+            });
+            firstUpdate = false;
+          }
         }
       );
 
@@ -95,7 +100,9 @@ export default function AngleMapScreen() {
   const calculateAngle = () => {
     if (main && pointA && pointB) {
       const result = getAngleBetweenPoints(main, pointA, pointB);
-      setAngle(result as any);
+      setAngle(result as String);
+    } else {
+      ToastAndroid.show("Tentukan 3 titik", ToastAndroid.SHORT);
     }
   };
 
@@ -109,7 +116,7 @@ export default function AngleMapScreen() {
   const ambilScreenshot = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== "granted") {
-      alert("Izin media tidak diberikan");
+      ToastAndroid.show("Izin media tidak diberikan", ToastAndroid.SHORT);
       return;
     }
 
@@ -119,10 +126,7 @@ export default function AngleMapScreen() {
     });
 
     await MediaLibrary.saveToLibraryAsync(uri);
-    Alert.alert(
-      "Screenshot Disimpan",
-      "Gambar peta sudah tersimpan di galeri."
-    );
+    ToastAndroid.show("Screenshot Disimpan", ToastAndroid.SHORT);
   };
 
   const allPoint = [main, pointA, pointB].filter(Boolean);
@@ -148,8 +152,8 @@ export default function AngleMapScreen() {
         initialRegion={{
           latitude: -6.2,
           longitude: 106.8,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
+          latitudeDelta: 0.002,
+          longitudeDelta: 0.002,
         }}
         showsUserLocation={true}
         followsUserLocation={false}
@@ -157,21 +161,21 @@ export default function AngleMapScreen() {
         {main && (
           <Marker coordinate={main} pinColor="red">
             <Callout>
-              <Text>Titik Utama</Text>
+              <Text>Point Utama</Text>
             </Callout>
           </Marker>
         )}
         {pointA && (
           <Marker coordinate={pointA} pinColor="green">
             <Callout>
-              <Text>Titik A</Text>
+              <Text>Point A</Text>
             </Callout>
           </Marker>
         )}
         {pointB && (
           <Marker coordinate={pointB} pinColor="blue">
             <Callout>
-              <Text>Titik B</Text>
+              <Text>Point B</Text>
             </Callout>
           </Marker>
         )}
@@ -179,16 +183,16 @@ export default function AngleMapScreen() {
         {allPoint.length >= 2 && (
           <Polyline
             coordinates={coordinates}
-            strokeColor="#000"
+            strokeColor="red"
             strokeWidth={3}
           />
         )}
 
         {angle && main && (
           <Marker coordinate={main}>
-            <Callout>
-              <Text>Sudut: {angle}°</Text>
-            </Callout>
+            <Text className="text-red-500 font-josefin-bold text-base">
+              {angle}°
+            </Text>
           </Marker>
         )}
       </MapView>
@@ -233,12 +237,15 @@ export default function AngleMapScreen() {
         {/* <Button
           title="Tentukan Titik Utama"
           onPress={() => takePoint(setMain)}
-        />
-        <Button title="Tentukan Titik A" onPress={() => takePoint(setPointA)} />
-        <Button title="Tentukan Titik B" onPress={() => takePoint(setPointB)} />
-        <Button title="Hitung Sudut" onPress={calculateAngle} />
-        <Button title="Reset Semua Titik" onPress={resetPoint} />
-        <Button title="Simpan Screenshot Map" onPress={ambilScreenshot} /> */}
+          />
+          <Button title="Tentukan Titik A" onPress={() => takePoint(setPointA)} />
+          <Button title="Tentukan Titik B" onPress={() => takePoint(setPointB)} />
+          <Button title="Hitung Sudut" onPress={calculateAngle} />
+          <Button title="Reset Semua Titik" onPress={resetPoint} />
+          <Button title="Simpan Screenshot Map" onPress={ambilScreenshot} /> */}
+        <View>
+          <Text className="font-josefin-bold text-2xl">Sudut: {angle}°</Text>
+        </View>
       </View>
     </View>
   );
