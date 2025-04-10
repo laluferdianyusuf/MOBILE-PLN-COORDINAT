@@ -19,6 +19,10 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    Josefin: require("../assets/fonts/JosefinSans-Regular.ttf"),
+    JosefinBold: require("../assets/fonts/JosefinSans-Bold.ttf"),
+    Helvetica: require("../assets/fonts/helvetica-now.ttf"),
+    HelveticaBold: require("../assets/fonts/helvetica-now-bold.ttf"),
   });
 
   useEffect(() => {
@@ -32,8 +36,8 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
+    <ThemeProvider value={colorScheme === "dark" ? DefaultTheme : DefaultTheme}>
+      <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
