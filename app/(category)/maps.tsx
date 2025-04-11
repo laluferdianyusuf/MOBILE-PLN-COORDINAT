@@ -6,12 +6,6 @@ import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
 import { BackButton } from "@/components/BackButton";
 import { router } from "expo-router";
-import {
-  Angle,
-  ArrowsClockwise,
-  Image,
-  MapPinPlus,
-} from "phosphor-react-native";
 
 type Coordinate = {
   latitude: number;
@@ -138,8 +132,8 @@ export default function AngleMapScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View className="absolute top-14 right-2 left-2 z-50">
-        <View className="flex-row items-center justify-between pb-4">
+      <View className="absolute top-14 right-2 left-2 z-50 justify-center">
+        <View className="flex-row items-center justify-between py-4 px-3 rounded-xl bg-white">
           <BackButton onBack={() => router.back()} />
           <Text className="font-helvetica-regular text-xl">Peta Iteraktif</Text>
           <View className="opacity-0" />
@@ -189,7 +183,7 @@ export default function AngleMapScreen() {
         )}
 
         {angle && main && (
-          <Marker coordinate={main}>
+          <Marker coordinate={main} anchor={{ x: 0.5, y: 0 }}>
             <Text className="text-red-500 font-josefin-bold text-base">
               {angle}°
             </Text>
@@ -198,41 +192,56 @@ export default function AngleMapScreen() {
       </MapView>
 
       <View className="absolute bottom-5 left-3 right-3 gap-2">
+        <View>
+          <Text className="font-josefin-bold text-2xl">Sudut: {angle}°</Text>
+        </View>
         <Pressable
           onPress={() => takePoint(setMain)}
-          className="bg-gray-50 self-end p-1 rounded-full border border-gray-200"
+          className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
-          <MapPinPlus size={30} color="red" />
+          <Text className="font-helvetica-regular self-center">
+            Tentukan Point 1
+          </Text>
         </Pressable>
         <Pressable
           onPress={() => takePoint(setPointA)}
-          className="bg-gray-50 self-end p-1 rounded-full border border-gray-200"
+          className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
-          <MapPinPlus size={30} color="green" />
+          <Text className="font-helvetica-regular self-center">
+            Tentukan Point 2
+          </Text>
         </Pressable>
         <Pressable
           onPress={() => takePoint(setPointB)}
-          className="bg-gray-50 self-end p-1 rounded-full border border-gray-200"
+          className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
-          <MapPinPlus size={30} color="blue" />
+          <Text className="font-helvetica-regular self-center">
+            Tentukan Point 3
+          </Text>
         </Pressable>
         <Pressable
           onPress={calculateAngle}
-          className="bg-gray-50 self-end p-1 rounded-full border border-gray-200"
+          className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
-          <Angle size={30} color="black" />
+          <Text className="font-helvetica-regular self-center">
+            Hitung Sudut
+          </Text>
         </Pressable>
         <Pressable
           onPress={resetPoint}
-          className="bg-gray-50 self-end p-1 rounded-full border border-gray-200"
+          className="bg-gray-50 p-1 rounded-xl border border-gray-200 "
         >
-          <ArrowsClockwise size={30} color="black" />
+          <Text className="font-helvetica-regular self-center">
+            Reset Titik
+          </Text>
         </Pressable>
         <Pressable
           onPress={ambilScreenshot}
-          className="bg-gray-50 self-end p-1 rounded-full border border-gray-200"
+          className="bg-gray-50 p-1 rounded-xl border border-gray-200"
         >
-          <Image size={30} color="black" />
+          <Text className="font-helvetica-regular self-center">
+            Simpan Map Ke Gallery
+          </Text>
         </Pressable>
         {/* <Button
           title="Tentukan Titik Utama"
@@ -243,9 +252,6 @@ export default function AngleMapScreen() {
           <Button title="Hitung Sudut" onPress={calculateAngle} />
           <Button title="Reset Semua Titik" onPress={resetPoint} />
           <Button title="Simpan Screenshot Map" onPress={ambilScreenshot} /> */}
-        <View>
-          <Text className="font-josefin-bold text-2xl">Sudut: {angle}°</Text>
-        </View>
       </View>
     </View>
   );

@@ -3,6 +3,7 @@ import React from "react";
 import {
   BezierCurve,
   CarBattery,
+  ClockClockwise,
   Compass,
   Intersection,
   Question,
@@ -80,12 +81,15 @@ const index = () => {
   return (
     <ThemedView className={`flex-1`}>
       <View className="pt-16 pb-6 px-6 flex-1 gap-7">
-        <View>
-          <Pressable className="p-2 rounded-full bg-gray-100 self-start">
+        <View className="flex-row justify-between">
+          <Pressable className="p-2 rounded-full bg-gray-100">
             <Question size={32} color="black" />
           </Pressable>
+          <Pressable className="p-2 rounded-full bg-gray-100">
+            <ClockClockwise size={32} color="black" />
+          </Pressable>
         </View>
-        <View className="mt-[65px]">
+        <View className="mt-[45px]">
           <Text className="text-5xl font-helvetica-regular">Hi User, </Text>
           <Text className="text-5xl font-helvetica-regular">
             How can i help you today?{" "}
