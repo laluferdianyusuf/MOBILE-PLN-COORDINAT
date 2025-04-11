@@ -7,8 +7,8 @@ import { CustomInput } from "@/components/CustomInput";
 import CustomButton from "@/components/CustomButton";
 
 const link = () => {
-  const [power, setPower] = useState<number>(0);
-  const [voltage, setVoltage] = useState<number>(0);
+  const [power, setPower] = useState<string>("");
+  const [voltage, setVoltage] = useState<string>("");
   const [result, setResult] = useState<number | null>(null);
   function hitungFuseLinkGardu(dayaTrafo: number, teganganTM: number) {
     const hasil = dayaTrafo / (teganganTM * Math.sqrt(3));
@@ -22,11 +22,16 @@ const link = () => {
   console.log(`Arus Fuse Link Gardu: ${arusFuse.toFixed(2)} A`);
 
   const handleFuseLink = () => {
-    const fuseLinkResult = power / (voltage * Math.sqrt(3));
+    const POWER = parseFloat(power) || 0;
+    const VOLTAGE = parseFloat(voltage) || 0;
+    const fuseLinkResult = POWER / (VOLTAGE * Math.sqrt(3));
     setResult(fuseLinkResult);
   };
 
-  const handleSaveToDatabase = () => {};
+  const handleSaveToDatabase = () => {
+    try {
+    } catch (error) {}
+  };
 
   return (
     <ThemedView className={`flex-1`}>
@@ -56,16 +61,20 @@ const link = () => {
             </View>
 
             <CustomInput
-              value=""
+              value={power}
               style=""
-              placeholder="Masukan Daya"
+              placeholder="Contoh : 100000"
               title="Masukan Daya"
+              onChange={(text) => setPower(text)}
+              keyboard="numeric"
             />
             <CustomInput
-              value=""
+              value={voltage}
               style=""
-              placeholder="Masukan Tegangan"
+              placeholder="Contoh : 20000"
               title="Masukan Tegangan"
+              onChange={(text) => setVoltage(text)}
+              keyboard="numeric"
             />
             {result !== null && (
               <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">

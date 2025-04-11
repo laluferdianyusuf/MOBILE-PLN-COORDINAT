@@ -69,32 +69,37 @@ const FuseLinkPercabangan = () => {
             <CustomInput
               title="Kapasitas Trafo 1 (VA)"
               value={trafo1}
-              onChange={setTrafo1}
+              onChange={(text) => setTrafo1(text)}
               placeholder="Contoh: 50000"
+              keyboard="numeric"
             />
             <CustomInput
               title="Kapasitas Trafo 2 (VA)"
               value={trafo2}
-              onChange={setTrafo2}
+              onChange={(text) => setTrafo2(text)}
               placeholder="Contoh: 100000"
+              keyboard="numeric"
             />
             <CustomInput
               title="Kapasitas Trafo 3 (VA)"
               value={trafo3}
-              onChange={setTrafo3}
+              onChange={(text) => setTrafo3(text)}
               placeholder="Contoh: 160000"
+              keyboard="numeric"
             />
             <CustomInput
               title="Kapasitas Trafo 4 (VA)"
               value={trafo4}
-              onChange={setTrafo4}
+              onChange={(text) => setTrafo4(text)}
               placeholder="Contoh: 200000"
+              keyboard="numeric"
             />
             <CustomInput
               title="Tegangan TM (Volt)"
               value={voltage}
-              onChange={setVoltage}
+              onChange={(text) => setVoltage(text)}
               placeholder="Contoh: 20000"
+              keyboard="numeric"
             />
             {result !== null && (
               <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
@@ -103,6 +108,10 @@ const FuseLinkPercabangan = () => {
                 </Text>
                 <Text className="text-gray-700 text-base">
                   {result.toFixed(2)} A {"\n"}≈ {Math.round(result)} A
+                </Text>
+                <Text className="text-sm text-gray-500 mt-1 italic">
+                  Ini adalah arus fuse link percabangan berdasarkan nilai Trafo
+                  1 - 4 & tegangan yang Anda masukkan.
                 </Text>
               </View>
             )}

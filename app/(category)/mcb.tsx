@@ -55,7 +55,7 @@ const mcb = () => {
 
   return (
     <ThemedView className={`flex-1`}>
-      <View className="pt-16 pb-10 px-6 flex-1">
+      <View className="pt-16 pb-6 px-6 flex-1">
         <View className="flex-row items-center justify-between pb-4">
           <BackButton onBack={() => router.back()} />
           <Text className="font-helvetica-regular text-xl">
@@ -82,13 +82,13 @@ const mcb = () => {
             <CustomInput
               title="Masukkan Daya (Watt)"
               value={power1}
-              onChange={setPower1}
+              onChange={(text) => setPower1(text)}
               placeholder="Contoh: 1300"
             />
             <CustomInput
               title="Masukkan Tegangan (Volt)"
               value={voltage1}
-              onChange={setVoltage1}
+              onChange={(text) => setVoltage1(text)}
               placeholder="Contoh: 220"
             />
 
@@ -122,13 +122,13 @@ const mcb = () => {
             <CustomInput
               title="Masukkan Daya (Watt)"
               value={power3}
-              onChange={setPower3}
+              onChange={(text) => setPower3(text)}
               placeholder="Contoh: 6600"
             />
             <CustomInput
               title="Masukkan Tegangan (Volt)"
               value={voltage3}
-              onChange={setVoltage3}
+              onChange={(text) => setVoltage3(text)}
               placeholder="Contoh: 400"
             />
             {result3 !== null && (

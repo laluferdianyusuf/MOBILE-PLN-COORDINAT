@@ -39,9 +39,9 @@ const balancer = () => {
   const [lwbp, setLwbp] = useState<number | null>(null);
 
   const hitungWBP = () => {
-    const IR = parseFloat(ir);
-    const IS = parseFloat(is);
-    const IT = parseFloat(it);
+    const IR = parseFloat(ir) || 0;
+    const IS = parseFloat(is) || 0;
+    const IT = parseFloat(it) || 0;
     if (IR && IS && IT) {
       const WBP = (IR * IS * IT) / 3;
       const LWBP = WBP * 0.667;
@@ -54,7 +54,7 @@ const balancer = () => {
 
   return (
     <ThemedView className={`flex-1`}>
-      <View className="pt-16 pb-10 px-6 flex-1">
+      <View className="pt-16 pb-6 px-6 flex-1">
         <View className="flex-row items-center justify-between pb-4">
           <BackButton onBack={() => router.back()} />
           <Text className="font-helvetica-regular text-xl">
@@ -87,23 +87,23 @@ const balancer = () => {
             <CustomInput
               title="Masukkan IR"
               value={ir}
-              onChange={setIr}
+              onChange={(text) => setIr(text)}
               placeholder="Contoh: 10"
             />
             <CustomInput
               title="Masukkan IS"
               value={is}
-              onChange={setIs}
+              onChange={(text) => setIs(text)}
               placeholder="Contoh: 12"
             />
             <CustomInput
               title="Masukkan IT"
               value={it}
-              onChange={setIt}
+              onChange={(text) => setIt(text)}
               placeholder="Contoh: 11"
             />
             {wbp !== null && lwbp !== null && (
-              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 mt-6 space-y-2">
+              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
                 <Text className="text-gray-800 text-lg font-bold mb-2">
                   Hasil Perhitungan:
                 </Text>

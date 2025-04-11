@@ -13,9 +13,9 @@ const substation = () => {
   const [nhFuse, setNhFuse] = useState<number | null>(null);
 
   const handleCalculate = () => {
-    const P = parseFloat(power);
-    const V = parseFloat(voltage);
-    const n = parseInt(line);
+    const P = parseFloat(power) || 0;
+    const V = parseFloat(voltage) || 0;
+    const n = parseInt(line) || 0;
 
     if (!P || !V || !n || n === 0) {
       setNhFuse(null);
@@ -58,7 +58,7 @@ const substation = () => {
 
   return (
     <ThemedView className={`flex-1`}>
-      <View className="pt-16 pb-10 px-6 flex-1">
+      <View className="pt-16 pb-6 px-6 flex-1">
         <View className="flex-row items-center justify-between pb-4">
           <BackButton onBack={() => router.back()} />
           <Text className="font-helvetica-regular text-xl">NH Fuse Gardu</Text>
@@ -110,24 +110,24 @@ const substation = () => {
             <CustomInput
               title="Masukkan Daya"
               value={power}
-              onChange={setPower}
+              onChange={(text) => setPower(text)}
               placeholder="Contoh: 200000"
             />
             <CustomInput
               title="Masukkan Tegangan"
               value={voltage}
-              onChange={setVoltage}
+              onChange={(text) => setVoltage(text)}
               placeholder="Contoh: 400"
             />
             <CustomInput
               title="Masukkan Jumlah Jurusan"
               value={line}
-              onChange={setLine}
+              onChange={(text) => setLine(text)}
               placeholder="Contoh: 4"
             />
 
             {nhFuse !== null && (
-              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 mt-6 space-y-2">
+              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
                 <Text className="text-gray-800 text-lg font-bold mb-2">
                   Hasil Perhitungan:
                 </Text>
