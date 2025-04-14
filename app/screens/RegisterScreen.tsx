@@ -15,8 +15,10 @@ interface RegisterScreenProps {
 }
 
 interface RegisterFormData {
-  email: string;
+  name: string;
   username: string;
+  address: string;
+  email: string;
   password: string;
 }
 
@@ -30,11 +32,22 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ isAdmin }) => {
         required_error: "Email tidak boleh kosong",
       })
       .email("Format Email harus valid"),
+    name: z
+      .string({
+        required_error: "Nama tidak boleh kosong",
+      })
+      .min(4, "Nama harus memiliki minimal 4 karakter"),
     username: z
       .string({
         required_error: "Username tidak boleh kosong",
       })
       .min(4, "Username harus memiliki minimal 4 karakter"),
+    address: z
+      .string({
+        required_error: "Alamat tidak boleh kosong",
+      })
+      .min(4, "Alamat harus memiliki minimal 4 karakter")
+      .startsWith("Jl.", "Alamat harus diawali dengan 'JL.'"),
     password: z
       .string({
         required_error: "Password tidak boleh kosong",
@@ -97,16 +110,35 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ isAdmin }) => {
           contentContainerClassName="gap-12 justify-center"
         >
           <View className="gap-3">
-            <Text className="font-inter font-bold capitalize text-xl text-custom-light-blue-1">
-              Daftarkan akunmu
+            <Text className="font-inter font-bold capitalize text-xl text-custom-light-blue-2">
+              Daftarkan diri
             </Text>
             <Text className="font-inter text-justify text-custom-grey-2">
-              Bergabunglah dengan kami! Daftarkan akun Anda untuk menikmati
-              layanan lengkap Aduanku.
+              Bergabunglah dengan kami! Daftarkan diri untuk menikmati layanan
+              lengkap.
             </Text>
           </View>
           <View className="gap-7">
             <View className="gap-3">
+              <Controller
+                control={control}
+                name="name"
+                render={({ field: { onChange, value } }) => (
+                  <CustomInput
+                    placeholder="Nama"
+                    value={value}
+                    keyboard="default"
+                    onChange={onChange}
+                    icon={"person-circle-outline"}
+                    border="border-custom-grey-3"
+                    background="bg-custom-grey-3"
+                    paddingHorizontal="py-3"
+                    paddingVertical="px-5"
+                    activeBorder="border-custom-light-blue-1"
+                    errorMessage={errors.name?.message || apiError}
+                  />
+                )}
+              />
               <Controller
                 control={control}
                 name="username"
@@ -123,6 +155,25 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ isAdmin }) => {
                     paddingVertical="px-5"
                     activeBorder="border-custom-light-blue-1"
                     errorMessage={errors.username?.message || apiError}
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="address"
+                render={({ field: { onChange, value } }) => (
+                  <CustomInput
+                    placeholder="Aalamat"
+                    value={value}
+                    keyboard="default"
+                    onChange={onChange}
+                    icon={"person-circle-outline"}
+                    border="border-custom-grey-3"
+                    background="bg-custom-grey-3"
+                    paddingHorizontal="py-3"
+                    paddingVertical="px-5"
+                    activeBorder="border-custom-light-blue-1"
+                    errorMessage={errors.address?.message || apiError}
                   />
                 )}
               />
@@ -168,7 +219,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ isAdmin }) => {
             </View>
             <Pressable
               onPress={handleSubmit(handleRegister)}
-              className="bg-custom-light-blue-1 p-3 rounded-xl"
+              className="bg-custom-light-blue-2 p-3 rounded-xl"
             >
               <Text className="font-inter text-white text-center">Daftar</Text>
             </Pressable>
@@ -186,7 +237,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ isAdmin }) => {
                 sudah mempunyai akun ?
               </Text>
               <Pressable onPress={handleRouter}>
-                <Text className="font-inter font-bold text-custom-light-blue-1 capitalize">
+                <Text className="font-inter font-bold text-custom-light-blue-2 capitalize">
                   masuk
                 </Text>
               </Pressable>

@@ -113,7 +113,7 @@ const LoginScreen: React.FC = ({}) => {
           contentContainerClassName="gap-12 justify-center"
         >
           <View className="gap-3">
-            <Text className="font-inter font-bold capitalize text-xl text-custom-light-blue-1">
+            <Text className="font-inter font-bold capitalize text-xl text-custom-light-blue-2">
               Selamat Datang
             </Text>
             <Text className="font-inter text-justify text-custom-grey-2">
@@ -166,7 +166,7 @@ const LoginScreen: React.FC = ({}) => {
             <Pressable
               // onPress={handleSubmit(handleLogin)}
               onPress={() => router.push("/(tabs)")}
-              className="bg-custom-light-blue-1 p-3 rounded-xl"
+              className="bg-custom-light-blue-2 p-3 rounded-xl"
             >
               <Text className="font-inter text-white text-center">Masuk</Text>
             </Pressable>
@@ -186,7 +186,7 @@ const LoginScreen: React.FC = ({}) => {
               <Pressable
                 onPress={() => router.push({ pathname: "/(auth)/register" })}
               >
-                <Text className="font-inter font-bold text-custom-light-blue-1">
+                <Text className="font-inter font-bold text-custom-light-blue-2">
                   Daftar
                 </Text>
               </Pressable>
