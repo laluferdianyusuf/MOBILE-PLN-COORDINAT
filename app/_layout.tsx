@@ -13,6 +13,7 @@ import "../global.css";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Provider } from "react-redux";
 import { store } from "@/redux/store";
+import { CopilotProvider } from "react-native-copilot";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -43,12 +44,14 @@ export default function RootLayout() {
       <ThemeProvider
         value={colorScheme === "dark" ? DefaultTheme : DefaultTheme}
       >
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="dark" />
+        <CopilotProvider tooltipStyle={{}} arrowColor="red" arrowSize={0}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="dark" />
+        </CopilotProvider>
       </ThemeProvider>
     </Provider>
   );

@@ -9,11 +9,15 @@ interface CategoryItemProps {
   handlePress: () => void;
 }
 
-const CategoryItem: React.FC<CategoryItemProps> = ({ item, handlePress }) => {
+const CategoryItem: React.FC<CategoryItemProps> = (
+  { item, handlePress },
+  ref
+) => {
   const { colors } = useTheme();
 
   return (
     <Pressable
+      ref={ref}
       className={`rounded-3xl items-center justify-center flex-1 ${
         item.color
       } px-3 py-6 ${item.id === "fuse_link" ? "border border-gray-100" : ""}`}
