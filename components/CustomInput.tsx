@@ -1,7 +1,7 @@
 import React, { ReactNode, Ref, useState } from "react";
 import { View, Text, TextInput, Pressable } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { Eye, EyeSlash } from "phosphor-react-native";
 
 interface CustomInputProps {
   title?: string;
@@ -41,11 +41,11 @@ export const CustomInput = (
     disabled = false,
     maxLength,
     multiline = false,
-    border = "border-custom-purple-1",
+    border = "border-custom-light-blue-1",
     background = "bg-transparent",
     paddingHorizontal = "py-1",
     paddingVertical = "px-5",
-    activeBorder = "border-custom-purple-1",
+    activeBorder = "border-custom-light-blue-1",
     errorMessage,
   }: CustomInputProps,
   ref: Ref<TextInput>
@@ -61,7 +61,7 @@ export const CustomInput = (
   return (
     <View className={`mb-2 ${style}`}>
       {title && (
-        <Text className="font-josefin-bold text-md capitalize opacity-75">
+        <Text className="font-inter font-bold text-md capitalize opacity-75">
           {title}
         </Text>
       )}
@@ -70,8 +70,6 @@ export const CustomInput = (
           isFocused ? activeBorder : border
         } ${background} rounded-2xl flex-row items-center gap-3 ${paddingHorizontal} ${paddingVertical}`}
       >
-        {/* {icon}
-        <View className="h-1/2 w-[1px] bg-custom-purple-1" /> */}
         <TextInput
           ref={ref}
           onChangeText={onChange}
@@ -80,7 +78,7 @@ export const CustomInput = (
           placeholderTextColor={"#94a3b8"}
           secureTextEntry={secureText}
           style={{
-            fontFamily: "Josefin",
+            fontFamily: "Inter",
             color: "black",
           }}
           className={`flex-1`}
@@ -94,16 +92,16 @@ export const CustomInput = (
         />
         {isPassword ? (
           <Pressable onPress={toggleSecureText}>
-            <Ionicons
-              name={secureText ? "eye-outline" : "eye-off-outline"}
-              color={isFocused ? "#5e7dbd" : "#94a3b8"}
-              size={20}
-            />
+            {secureText ? (
+              <Eye size={20} color="#c0e5f7" />
+            ) : (
+              <EyeSlash size={20} color="#2fabe0" />
+            )}
           </Pressable>
         ) : null}
       </View>
       {errorMessage && (
-        <Text className="text-custom-error-2 font-josefin text-xs">
+        <Text className="text-custom-error-2 font-inter text-xs">
           {errorMessage}
         </Text>
       )}

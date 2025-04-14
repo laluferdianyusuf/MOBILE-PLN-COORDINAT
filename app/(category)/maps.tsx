@@ -1,6 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
 import { View, Text, Alert, Pressable, ToastAndroid } from "react-native";
-import MapView, { Marker, Polyline, Callout, LatLng } from "react-native-maps";
+import MapView, {
+  Marker,
+  Polyline,
+  Callout,
+  LatLng,
+  Polygon,
+} from "react-native-maps";
 import * as Location from "expo-location";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
@@ -46,6 +52,13 @@ export default function AngleMapScreen() {
   );
 
   const mapRef = useRef<MapView>(null) as React.MutableRefObject<MapView>;
+
+  useEffect(() => {
+    if (main && pointA && pointB) {
+      const result = getAngleBetweenPoints(main, pointA, pointB);
+      setAngle(result);
+    }
+  }, [main, pointA, pointB]);
 
   useEffect(() => {
     (async () => {
@@ -129,6 +142,7 @@ export default function AngleMapScreen() {
   if (main) coordinates.push(main);
   if (pointA) coordinates.push(pointA);
   if (pointB) coordinates.push(pointB);
+  console.log("ISI KOORDINAT:", coordinates);
 
   return (
     <View style={{ flex: 1 }}>
@@ -180,6 +194,22 @@ export default function AngleMapScreen() {
             strokeColor="red"
             strokeWidth={3}
           />
+        )}
+
+        {coordinates.length === 3 && (
+          <>
+            <Polyline
+              coordinates={coordinates}
+              strokeColor="red"
+              strokeWidth={3}
+            />
+
+            {/* <Polygon
+              coordinates={coordinates}
+              strokeColor="#00000000"
+              fillColor="rgba(30, 144, 255, 0.3)"
+            /> */}
+          </>
         )}
 
         {angle && main && (

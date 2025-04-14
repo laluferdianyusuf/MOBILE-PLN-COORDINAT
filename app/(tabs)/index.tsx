@@ -18,7 +18,7 @@ import { router } from "expo-router";
 const category: Category[] = [
   {
     id: "maps",
-    name: "Peta Interaktif",
+    name: "Peta",
     icon: <Compass size={35} color="black" />,
     desc: "More about teacher",
     primary: "bg-custom-info-1",
