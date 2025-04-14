@@ -42,6 +42,31 @@ const getAngleBetweenPoints = (
   return angleDegrees.toFixed(2);
 };
 
+const getAddressFromCoords = async (latitude: number, longitude: number) => {
+  const [address] = await Location.reverseGeocodeAsync({
+    latitude,
+    longitude,
+  });
+
+  if (address) {
+    return [
+      address.name,
+      address.street,
+      address.district,
+      address.city || address.subregion,
+      address.region,
+      address.postalCode,
+      address.country,
+      address.isoCountryCode,
+      address.timezone,
+    ]
+      .filter(Boolean)
+      .join(", ");
+  }
+
+  return "Alamat tidak ditemukan";
+};
+
 export default function AngleMapScreen() {
   const [main, setMain] = useState(null);
   const [pointA, setPointA] = useState(null);
@@ -50,6 +75,7 @@ export default function AngleMapScreen() {
   const [currentLocation, setCurrentLocation] = useState<Coordinate | null>(
     null
   );
+  const [addressName, setAddressName] = useState<string>("");
 
   const mapRef = useRef<MapView>(null) as React.MutableRefObject<MapView>;
 
@@ -98,6 +124,14 @@ export default function AngleMapScreen() {
     })();
   }, []);
 
+  useEffect(() => {
+    if (currentLocation) {
+      getAddressFromCoords(currentLocation.latitude, currentLocation.longitude)
+        .then(setAddressName)
+        .catch(() => setAddressName("Gagal mengambil alamat"));
+    }
+  }, [currentLocation]);
+
   const takePoint = async (setter: any) => {
     const location = await Location.getCurrentPositionAsync({});
     const { latitude, longitude } = location.coords;
@@ -142,14 +176,13 @@ export default function AngleMapScreen() {
   if (main) coordinates.push(main);
   if (pointA) coordinates.push(pointA);
   if (pointB) coordinates.push(pointB);
-  console.log("ISI KOORDINAT:", coordinates);
 
   return (
     <View style={{ flex: 1 }}>
       <View className="absolute top-14 right-2 left-2 z-50 justify-center">
         <View className="flex-row items-center justify-between py-4 px-3 rounded-xl bg-white">
           <BackButton onBack={() => router.back()} />
-          <Text className="font-helvetica-regular text-xl">Peta Iteraktif</Text>
+          <Text className="font-helvetica-regular text-xl">Peta Sudut</Text>
           <View className="opacity-0" />
         </View>
       </View>
@@ -168,30 +201,45 @@ export default function AngleMapScreen() {
       >
         {main && (
           <Marker coordinate={main} pinColor="red">
-            <Callout>
-              <Text>Point Utama</Text>
-            </Callout>
+            <View
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: "red",
+              }}
+            />
           </Marker>
         )}
         {pointA && (
           <Marker coordinate={pointA} pinColor="green">
-            <Callout>
-              <Text>Point A</Text>
-            </Callout>
+            <View
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: "green",
+              }}
+            />
           </Marker>
         )}
         {pointB && (
           <Marker coordinate={pointB} pinColor="blue">
-            <Callout>
-              <Text>Point B</Text>
-            </Callout>
+            <View
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: "blue",
+              }}
+            />
           </Marker>
         )}
 
         {allPoint.length >= 2 && (
           <Polyline
             coordinates={coordinates}
-            strokeColor="red"
+            strokeColor="yellow"
             strokeWidth={3}
           />
         )}
@@ -200,20 +248,20 @@ export default function AngleMapScreen() {
           <>
             <Polyline
               coordinates={coordinates}
-              strokeColor="red"
+              strokeColor="yellow"
               strokeWidth={3}
             />
 
-            {/* <Polygon
+            <Polygon
               coordinates={coordinates}
               strokeColor="#00000000"
               fillColor="rgba(30, 144, 255, 0.3)"
-            /> */}
+            />
           </>
         )}
 
-        {angle && main && (
-          <Marker coordinate={main} anchor={{ x: 0.5, y: 0 }}>
+        {angle && pointA && (
+          <Marker coordinate={pointA} anchor={{ x: 0.5, y: 0 }}>
             <Text className="text-red-500 font-josefin-bold text-base">
               {angle}°
             </Text>
@@ -250,14 +298,6 @@ export default function AngleMapScreen() {
           </Text>
         </Pressable>
         <Pressable
-          onPress={calculateAngle}
-          className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
-        >
-          <Text className="font-helvetica-regular self-center">
-            Hitung Sudut
-          </Text>
-        </Pressable>
-        <Pressable
           onPress={resetPoint}
           className="bg-gray-50 p-1 rounded-xl border border-gray-200 "
         >
@@ -273,15 +313,6 @@ export default function AngleMapScreen() {
             Simpan Map Ke Gallery
           </Text>
         </Pressable>
-        {/* <Button
-          title="Tentukan Titik Utama"
-          onPress={() => takePoint(setMain)}
-          />
-          <Button title="Tentukan Titik A" onPress={() => takePoint(setPointA)} />
-          <Button title="Tentukan Titik B" onPress={() => takePoint(setPointB)} />
-          <Button title="Hitung Sudut" onPress={calculateAngle} />
-          <Button title="Reset Semua Titik" onPress={resetPoint} />
-          <Button title="Simpan Screenshot Map" onPress={ambilScreenshot} /> */}
       </View>
     </View>
   );
