@@ -9,8 +9,10 @@ export interface Category {
   primary: string;
   color: string;
   uri:
-    | "/(category)/teacher"
-    | "/(category)/student"
-    | "/(category)/attendance"
-    | "/(category)/calendar";
+    | "/(category)/maps"
+    | "/(category)/link"
+    | "/(category)/branch"
+    | "/(category)/substation"
+    | "/(category)/mcb"
+    | "/(category)/balancer";
 }
