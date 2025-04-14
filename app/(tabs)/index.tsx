@@ -1,11 +1,19 @@
-import { FlatList, Pressable, Text, View } from "react-native";
-import React from "react";
+import {
+  BackHandler,
+  FlatList,
+  Pressable,
+  Text,
+  ToastAndroid,
+  View,
+} from "react-native";
+import React, { useEffect, useRef } from "react";
 import {
   BezierCurve,
   CarBattery,
   ClockClockwise,
   Compass,
   Intersection,
+  Plugs,
   Question,
   SubsetOf,
   SupersetOf,
@@ -14,15 +22,16 @@ import { Category } from "@/types/types";
 import { ThemedView } from "@/components/ThemedView";
 import CategoryItem from "@/components/CategoryItem";
 import { router } from "expo-router";
+import { useIsFocused } from "@react-navigation/native";
 
 const category: Category[] = [
   {
     id: "maps",
-    name: "Peta",
+    name: "Peta Sudut",
     icon: <Compass size={35} color="black" />,
     desc: "More about teacher",
     primary: "bg-custom-info-1",
-    color: "bg-[#def3fa]",
+    color: "bg-custom-light-blue-1",
     uri: "/(category)/maps",
   },
   {
@@ -31,7 +40,7 @@ const category: Category[] = [
     icon: <SubsetOf size={35} color="black" />,
     desc: "More about student",
     primary: "bg-custom-warning-1",
-    color: "bg-[#fafafa]",
+    color: "bg-custom-grey-5",
     uri: "/(category)/link",
   },
   {
@@ -40,7 +49,7 @@ const category: Category[] = [
     icon: <SupersetOf size={35} color="black" />,
     desc: "More about attendance",
     primary: "bg-custom-success-1",
-    color: "bg-[#e0f7dc]",
+    color: "bg-custom-light-green-1",
     uri: "/(category)/branch",
   },
   {
@@ -49,7 +58,7 @@ const category: Category[] = [
     icon: <Intersection size={35} color="black" />,
     desc: "More about calendar",
     primary: "bg-custom-indigo-1",
-    color: "bg-[#fff4bf]",
+    color: "bg-custom-light-yellow-1",
     uri: "/(category)/substation",
   },
   {
@@ -58,7 +67,7 @@ const category: Category[] = [
     icon: <CarBattery size={35} color="black" />,
     desc: "More about calendar",
     primary: "bg-custom-indigo-1",
-    color: "bg-[#ede4f5]",
+    color: "bg-custom-light-purple-1",
     uri: "/(category)/mcb",
   },
   {
@@ -73,6 +82,41 @@ const category: Category[] = [
 ];
 
 const index = () => {
+  const backPressCount = useRef(0);
+  const backPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    const handleBackPress = () => {
+      if (backPressCount.current === 0) {
+        backPressCount.current += 1;
+        ToastAndroid.show("Tekan sekali lagi untuk keluar", ToastAndroid.SHORT);
+
+        backPressTimer.current = setTimeout(() => {
+          backPressCount.current = 0;
+        }, 3000);
+
+        return true;
+      } else {
+        clearTimeout(backPressTimer.current as NodeJS.Timeout);
+        BackHandler.exitApp();
+        return true;
+      }
+    };
+
+    if (isFocused) {
+      backPressCount.current = 0;
+      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    } else {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      clearTimeout(backPressTimer.current as NodeJS.Timeout);
+    }
+
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+      clearTimeout(backPressTimer.current as NodeJS.Timeout);
+    };
+  }, [isFocused]);
+
   const handlePressItem = (item: Category) => {
     router.push({
       pathname: item.uri as any,
@@ -85,9 +129,14 @@ const index = () => {
           <Pressable className="p-2 rounded-full bg-gray-100">
             <Question size={32} color="black" />
           </Pressable>
-          <Pressable className="p-2 rounded-full bg-gray-100">
-            <ClockClockwise size={32} color="black" />
-          </Pressable>
+          <View className="flex-row items-center gap-3">
+            <Pressable className="p-2 rounded-full bg-gray-100">
+              <ClockClockwise size={32} color="black" />
+            </Pressable>
+            <Pressable className="p-2 rounded-full bg-custom-error-1">
+              <Plugs size={32} color="#de5757" />
+            </Pressable>
+          </View>
         </View>
         <View className="mt-[45px]">
           <Text className="text-5xl font-helvetica-regular">Hi User, </Text>
