@@ -3,6 +3,7 @@ import {
   getAllHistoryByUserId,
   getAllHistoryByCategory,
   deleteHistory,
+  getHistoryByHistoryId,
 } from "@/redux/reducers/historyReducer";
 import { AppDispatch } from "@/redux/store";
 import { History, User } from "@/types/types";
@@ -15,6 +16,7 @@ interface UseHistoryDataProps {
   user_id?: string;
   closeModal?: () => void;
   value?: any;
+  historyId?: string;
 }
 
 export function useHistoryData({
@@ -22,6 +24,7 @@ export function useHistoryData({
   user_id,
   closeModal,
   value,
+  historyId,
 }: UseHistoryDataProps) {
   const dispatch = useDispatch<AppDispatch>();
   const [error, setError] = useState<string>("");
@@ -29,7 +32,7 @@ export function useHistoryData({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingGenerate, setIsLoadingGenerate] = useState<boolean>(false);
   const [history, setIsHistory] = useState<History[]>([]);
-  console.log("id", id);
+  const [historyDetail, setHistoryDetail] = useState<History | null>(null);
 
   const generateNewHistory = async () => {
     setIsLoadingGenerate(true);
@@ -94,6 +97,24 @@ export function useHistoryData({
     }
   };
 
+  const validateHistoryByHistoryId = async () => {
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+    try {
+      const res = await dispatch(
+        getHistoryByHistoryId({ id: historyId! })
+      ).unwrap();
+
+      setHistoryDetail(res.data.history);
+      setSuccess("Histories validated successfully");
+    } catch (error) {
+      setError("Error validate");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const deleteHistories = async () => {
     if (!id) {
       ToastAndroid.show("ID tidak ditemukan", ToastAndroid.SHORT);
@@ -129,5 +150,7 @@ export function useHistoryData({
     generateNewHistory,
     isLoadingGenerate,
     validateHistoryByCategory,
+    validateHistoryByHistoryId,
+    historyDetail,
   };
 }

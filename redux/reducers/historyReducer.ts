@@ -65,6 +65,25 @@ export const getAllHistoryByCategory = createAsyncThunk<
   }
 });
 
+// get all history by history ID
+export const getHistoryByHistoryId = createAsyncThunk<
+  { data: { history: History }; status: boolean; message: string | null },
+  { id: string }
+>("get/history/id", async ({ id }, { rejectWithValue }) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await axios.get(`${uri}/api/v2/retrieve/history/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data);
+  }
+});
+
 // delete history
 export const deleteHistory = createAsyncThunk(
   "history/deleteHistory",
@@ -86,6 +105,7 @@ export const deleteHistory = createAsyncThunk(
 
 const initialState: HistoryState = {
   histories: [],
+  historyDetail: null,
   loading: false,
   error: null,
 };
@@ -134,6 +154,20 @@ const historySlice = createSlice({
         state.histories = action.payload.data.history || [];
       })
       .addCase(getAllHistoryByCategory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      //   get all history by history ID
+      .addCase(getHistoryByHistoryId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getHistoryByHistoryId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.historyDetail = action.payload.data.history as History;
+      })
+      .addCase(getHistoryByHistoryId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

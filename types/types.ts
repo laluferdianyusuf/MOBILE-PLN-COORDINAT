@@ -68,13 +68,14 @@ export interface History {
     | "balancer";
   title?: string;
   description?: string;
-  value?: string[];
+  value?: Record<string, any>;
   background?: string;
   createdAt?: string;
 }
 
 export interface HistoryState {
   histories: History[] | [];
+  historyDetail: History | null;
   loading: boolean;
   error: string | null;
 }
@@ -83,6 +84,18 @@ export interface HistoryResponse {
   data: {
     history: History[] | [];
   };
+  status: boolean;
+  message: string | null;
+}
+
+export interface HistoryDetailState {
+  history: History | null;
+  loading: boolean;
+  error: string | null;
+}
+
+export interface HistoryDetailResponse {
+  data: History;
   status: boolean;
   message: string | null;
 }
