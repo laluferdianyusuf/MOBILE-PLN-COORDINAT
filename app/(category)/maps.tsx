@@ -19,12 +19,12 @@ const getAngleBetweenPoints = (
   B: Coordinate
 ) => {
   const vectorA = {
-    x: A.latitude - main.latitude,
-    y: A.longitude - main.longitude,
+    x: main.latitude - A.latitude,
+    y: main.longitude - A.longitude,
   };
   const vectorB = {
-    x: B.latitude - main.latitude,
-    y: B.longitude - main.longitude,
+    x: B.latitude - A.latitude,
+    y: B.longitude - A.longitude,
   };
 
   const dotProduct = vectorA.x * vectorB.x + vectorA.y * vectorB.y;
@@ -32,7 +32,7 @@ const getAngleBetweenPoints = (
   const magnitudeB = Math.sqrt(vectorB.x ** 2 + vectorB.y ** 2);
 
   const cosTheta = dotProduct / (magnitudeA * magnitudeB);
-  const angleRadians = Math.acos(cosTheta);
+  const angleRadians = Math.acos(Math.min(Math.max(cosTheta, -1), 1));
   const angleDegrees = (angleRadians * 180) / Math.PI;
 
   return angleDegrees.toFixed(2);
@@ -81,7 +81,7 @@ export default function AngleMapScreen() {
 
   useEffect(() => {
     if (main && pointA && pointB) {
-      const result = getAngleBetweenPoints(main, pointA, pointB);
+      const result = getAngleBetweenPoints(pointA, main, pointB);
       setAngle(result);
     }
   }, [main, pointA, pointB]);
@@ -184,7 +184,7 @@ export default function AngleMapScreen() {
     value: {
       points: currentLocation,
       address: addressName,
-      angle: angle,
+      angle: `${angle}°`,
     },
     background: "bg-custom-light-blue-1",
   };
@@ -277,8 +277,8 @@ export default function AngleMapScreen() {
           </>
         )}
 
-        {angle && pointA && (
-          <Marker coordinate={pointA} anchor={{ x: 0.5, y: 0 }}>
+        {angle && main && (
+          <Marker coordinate={main} anchor={{ x: 0.5, y: 0 }}>
             <Text className="text-red-500 font-artegra text-base">
               {angle}°
             </Text>
