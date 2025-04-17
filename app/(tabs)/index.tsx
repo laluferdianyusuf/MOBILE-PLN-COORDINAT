@@ -16,14 +16,12 @@ import { useIsFocused } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   BottomSheetModal,
-  BottomSheetView,
   BottomSheetModalProvider,
-  BottomSheetBackdrop,
-  BottomSheetBackdropProps,
 } from "@gorhom/bottom-sheet";
 import { category } from "@/utils/category";
 import { useUserData } from "@/hooks/useUserHooks";
 import { LoadingWave } from "@/components";
+import CustomModal from "@/components/CustomModal";
 
 const index = () => {
   const backPressCount = useRef(0);
@@ -71,21 +69,6 @@ const index = () => {
   const handleCloseModalPress = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
   }, []);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
-
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop
-        {...props}
-        appearsOnIndex={0}
-        disappearsOnIndex={-1}
-        pressBehavior="close"
-      />
-    ),
-    []
-  );
 
   const { user, validateUser, handleLogout, isLoading } = useUserData({
     closeModal: handleCloseModalPress,
@@ -108,48 +91,6 @@ const index = () => {
       ) : (
         <GestureHandlerRootView className="flex-1 justify-center">
           <BottomSheetModalProvider>
-            <BottomSheetModal
-              containerStyle={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
-              ref={bottomSheetModalRef}
-              onChange={handleSheetChanges}
-              $modal
-              enableDismissOnClose={true}
-              enablePanDownToClose={true}
-              backdropComponent={renderBackdrop}
-            >
-              <BottomSheetView className="items-center py-5 px-5">
-                <View className="p-4 bg-custom-error-1 rounded-full mb-5">
-                  <Plugs size={50} color="#de5757" />
-                </View>
-                <Text className="font-artegra-bold text-xl mb-3">
-                  Keluar dari aplikasi?
-                </Text>
-
-                <Text className="font-artegra text-gray-500 text-sm text-center mb-5">
-                  Semua data koordinat dan hasil perhitunganmu sudah tersimpan.
-                  Silakan kembali kapan saja!
-                </Text>
-
-                <View className="gap-4 flex-col w-full">
-                  <Pressable
-                    className="bg-custom-error-2 items-center justify-center py-3 rounded-full"
-                    onPress={handleLogout}
-                  >
-                    <Text className="font-artegra-bold text-white">
-                      Ya, Keluar
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    className="py-3 items-center justify-center"
-                    onPress={handleCloseModalPress}
-                  >
-                    <Text className="font-artegra-bold text-gray-500">
-                      Tidak, Tetap disini
-                    </Text>
-                  </Pressable>
-                </View>
-              </BottomSheetView>
-            </BottomSheetModal>
             <View className="pt-16 pb-6 px-6 flex-1 gap-7">
               <View className="flex-row justify-between item-center">
                 <Pressable
@@ -193,6 +134,18 @@ const index = () => {
                 />
               </View>
             </View>
+
+            <CustomModal
+              onSubmit={handleLogout}
+              onClose={handleCloseModalPress}
+              title="Keluar dari aplikasi?"
+              description="Semua data koordinat dan hasil perhitunganmu sudah tersimpan.
+            Silakan kembali kapan saja!"
+              submitText="Ya, Keluar"
+              cancelText="Tidak, Tetap disini"
+              ref={bottomSheetModalRef}
+              icon={<Plugs size={50} color="#de5757" />}
+            />
           </BottomSheetModalProvider>
         </GestureHandlerRootView>
       )}

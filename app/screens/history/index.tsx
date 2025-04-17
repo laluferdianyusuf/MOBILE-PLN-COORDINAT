@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -18,10 +18,16 @@ import {
 } from "phosphor-react-native";
 import moment from "moment";
 import { ThemedView } from "@/components/ThemedView";
-import { BackButton } from "@/components";
+import { BackButton, LoadingWave } from "@/components";
 import "moment/locale/id";
 import { useUserData } from "@/hooks/useUserHooks";
 import { useHistoryData } from "@/hooks/useHistoryHooks";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import CustomModal from "@/components/CustomModal";
 
 moment.locale("id");
 
@@ -31,7 +37,8 @@ export default function HistoryList() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [query, setQuery] = useState<string>("");
   const [filteredData, setFilteredData] = useState<History[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // ref
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const {
     validateHistoryByUserId,
@@ -87,12 +94,12 @@ export default function HistoryList() {
       onPress={() =>
         router.push({
           pathname: "/screens/history/[id]",
-          params: { id: String(item.id), title: item.title },
+          params: { id: Number(item.id), title: item.title },
         })
       }
       className={`bg-custom-grey-5 p-3 px-4 rounded-3xl mb-3 flex-row justify-between items-center`}
     >
-      <View className="flex-row items-center gap-3">
+      <View className="flex-row items-center gap-3 flex-1">
         <Pressable
           onPress={() => handleSelected(String(item.id))}
           className={`w-5 h-5 rounded-full border border-gray-300 ${
@@ -100,7 +107,13 @@ export default function HistoryList() {
           } `}
         />
         <View>
-          <Text className="font-artegra-bold text-base">{item.title}</Text>
+          <Text
+            className="font-artegra-bold text-base"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {item.title}
+          </Text>
           <Text className="text-xs text-gray-500 font-artegra">
             {moment(item.createdAt).format("hh:mm A")}
           </Text>
@@ -136,87 +149,128 @@ export default function HistoryList() {
     acc[group].push(item);
     return acc;
   }, {} as Record<string, History[]>);
-  console.log(selectedItems);
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  const handleCloseModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.dismiss();
+  }, []);
 
   return (
     <ThemedView className={`flex-1`}>
-      <View className="pt-16 pb-6 px-6 flex-1">
-        <View className="flex-row items-center justify-between pb-4">
-          <BackButton onBack={() => router.back()} />
-          <Text className="font-artegra text-xl">Riwayat</Text>
-        </View>
-        <View className="flex-row items-center border border-gray-300 rounded-2xl px-4 py-2 mb-4">
-          <TextInput
-            className="ml-2 flex-1 text-sm text-gray-300"
-            placeholder="Cari kategori..."
-            placeholderTextColor={"#d1d5db"}
-            value={query}
-            onChangeText={setQuery}
-          />
-          <MagnifyingGlass size={20} color="#d1d5db" />
-        </View>
-
-        <View className=" pb-3 flex-row justify-between">
-          <View className="items-center flex-row-reverse gap-3">
-            <Pressable
-              onPress={deleteHistories}
-              className={`rounded-full border flex-row gap-1 items-center justify-center border-custom-error-1 px-2 ${
-                selectedItems.length > 0 ? "bg-custom-error-2" : "bg-white"
-              }`}
-            >
-              <Trash
-                size={10}
-                color={`${selectedItems.length > 0 ? "white" : "#de5757"}`}
-              />
-              <Text
-                className={`font-artegra text-xs capitalize ${
-                  selectedItems.length > 0
-                    ? "text-white"
-                    : "text-custom-error-2"
-                }`}
-              >
-                hapus
-              </Text>
-            </Pressable>
-          </View>
-          <View className="items-center self-end flex-row-reverse gap-3">
-            <Pressable
-              onPress={toggleSelectAll}
-              className={`w-5 h-5 rounded-full border border-gray-300 ${
-                selectedItems.length === history.length
-                  ? "bg-blue-300"
-                  : "bg-white"
-              }`}
-            />
-            <Text className="font-artegra text-xs text-gray-400">Semua</Text>
-          </View>
-        </View>
-
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {Object.entries(groupedHistory).map(([label, items]) => (
-            <View key={label} className="mb-4">
-              <View className="flex-row gap-3 mb-3 items-center">
-                {label === "Hari Ini" ? (
-                  <CalendarCheck size={15} weight="light" color="#6b7280" />
-                ) : label === "Kemarin" ? (
-                  <CalendarMinus size={15} weight="light" color="#6b7280" />
-                ) : (
-                  <Calendar size={15} weight="light" color="#6b7280" />
-                )}
-                <Text className="text-gray-500 text-xs font-artegra">
-                  {label}
-                </Text>
+      {isHistoryLoading ? (
+        <LoadingWave />
+      ) : (
+        <GestureHandlerRootView className="flex-1 justify-center">
+          <BottomSheetModalProvider>
+            <View className="pt-16 pb-6 px-6 flex-1">
+              <View className="flex-row items-center justify-between pb-4">
+                <BackButton onBack={() => router.back()} />
+                <Text className="font-artegra text-xl">Riwayat</Text>
               </View>
-              <FlatList
-                data={items}
-                renderItem={renderItem}
-                keyExtractor={(item) => String(item.id)}
-                scrollEnabled={false}
-              />
+              <View className="flex-row items-center border border-gray-300 rounded-2xl px-4 py-2 mb-4">
+                <TextInput
+                  className="ml-2 flex-1 text-sm text-gray-300"
+                  placeholder="Cari kategori..."
+                  placeholderTextColor={"#d1d5db"}
+                  value={query}
+                  onChangeText={setQuery}
+                />
+                <MagnifyingGlass size={20} color="#d1d5db" />
+              </View>
+
+              <View className=" pb-3 flex-row justify-between">
+                <View className="items-center flex-row-reverse gap-3">
+                  <Pressable
+                    disabled={selectedItems.length < 1}
+                    onPress={handlePresentModalPress}
+                    className={`rounded-full border flex-row gap-1 items-center justify-center border-custom-error-1 px-2 ${
+                      selectedItems.length > 0
+                        ? "bg-custom-error-2 opacity-100"
+                        : "bg-white opacity-50"
+                    }`}
+                  >
+                    <Trash
+                      size={10}
+                      color={`${
+                        selectedItems.length > 0 ? "white" : "#de5757"
+                      }`}
+                    />
+                    <Text
+                      className={`font-artegra text-xs capitalize ${
+                        selectedItems.length > 0
+                          ? "text-white"
+                          : "text-custom-error-2"
+                      }`}
+                    >
+                      hapus
+                    </Text>
+                  </Pressable>
+                </View>
+                <View className="items-center self-end flex-row-reverse gap-3">
+                  <Pressable
+                    onPress={toggleSelectAll}
+                    className={`w-5 h-5 rounded-full border border-gray-300 ${
+                      selectedItems.length === filteredData.length
+                        ? "bg-blue-300"
+                        : "bg-white"
+                    }`}
+                  />
+                  <Text className="font-artegra text-xs text-gray-400">
+                    Semua
+                  </Text>
+                </View>
+              </View>
+
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {Object.entries(groupedHistory).map(([label, items]) => (
+                  <View key={label} className="mb-4">
+                    <View className="flex-row gap-3 mb-3 items-center">
+                      {label === "Hari Ini" ? (
+                        <CalendarCheck
+                          size={15}
+                          weight="light"
+                          color="#6b7280"
+                        />
+                      ) : label === "Kemarin" ? (
+                        <CalendarMinus
+                          size={15}
+                          weight="light"
+                          color="#6b7280"
+                        />
+                      ) : (
+                        <Calendar size={15} weight="light" color="#6b7280" />
+                      )}
+                      <Text className="text-gray-500 text-xs font-artegra">
+                        {label}
+                      </Text>
+                    </View>
+                    <FlatList
+                      data={items}
+                      renderItem={renderItem}
+                      keyExtractor={(item) => String(item.id)}
+                      scrollEnabled={false}
+                    />
+                  </View>
+                ))}
+              </ScrollView>
             </View>
-          ))}
-        </ScrollView>
-      </View>
+
+            <CustomModal
+              onSubmit={deleteHistories}
+              onClose={handleCloseModalPress}
+              title="Yakin ingin menghapus data?"
+              description="Data yang kamu pilih akan dihapus secara permanen dan tidak bisa dikembalikan. Pastikan kamu sudah mengeceknya dengan benar."
+              submitText="Ya, Hapus Sekarang"
+              cancelText="Tidak, Batalkan"
+              ref={bottomSheetModalRef}
+              icon={<Trash size={50} color="#de5757" />}
+            />
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      )}
     </ThemedView>
   );
 }
