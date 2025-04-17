@@ -1,25 +1,22 @@
 import { ScrollView, Text, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { BackButton } from "@/components/BackButton";
 import { router } from "expo-router";
 import { CustomInput } from "@/components/CustomInput";
 import CustomButton from "@/components/CustomButton";
+import { useUserData } from "@/hooks/useUserHooks";
+import { useHistoryData } from "@/hooks/useHistoryHooks";
 
 const link = () => {
+  const { user, validateUser } = useUserData({});
   const [power, setPower] = useState<string>("");
   const [voltage, setVoltage] = useState<string>("");
   const [result, setResult] = useState<number | null>(null);
-  function hitungFuseLinkGardu(dayaTrafo: number, teganganTM: number) {
-    const hasil = dayaTrafo / (teganganTM * Math.sqrt(3));
-    return hasil;
-  }
 
-  const daya = 100000;
-  const tegangan = 20000;
-
-  const arusFuse = hitungFuseLinkGardu(daya, tegangan);
-  console.log(`Arus Fuse Link Gardu: ${arusFuse.toFixed(2)} A`);
+  useEffect(() => {
+    validateUser();
+  }, []);
 
   const handleFuseLink = () => {
     const POWER = parseFloat(power) || 0;
@@ -28,19 +25,30 @@ const link = () => {
     setResult(fuseLinkResult);
   };
 
-  const handleSaveToDatabase = () => {
-    try {
-    } catch (error) {}
+  const payload = {
+    category: "fuse_link",
+    title: "Menghitung Fuse Link Gardu",
+    description: `Hasil perhitungan Fuse Link Gardu`,
+    value: {
+      power: power,
+      voltage: voltage,
+      result: result,
+    },
+    background: "bg-custom-grey-5",
   };
+
+  const { generateNewHistory, isLoadingGenerate: isHistoryLoading } =
+    useHistoryData({
+      user_id: user.userId,
+      value: payload,
+    });
 
   return (
     <ThemedView className={`flex-1`}>
       <View className="pt-16 pb-6 px-6 flex-1">
         <View className="flex-row items-center justify-between pb-4">
           <BackButton onBack={() => router.back()} />
-          <Text className="font-helvetica-regular text-xl">
-            Perhitungan Fuse Link
-          </Text>
+          <Text className="font-artegra text-xl">Perhitungan Fuse Link</Text>
           <View className="opacity-0" />
         </View>
         <ScrollView
@@ -51,11 +59,13 @@ const link = () => {
         >
           <View className="flex-1">
             <View className="mb-4 p-4 bg-gray-100 rounded-lg border border-gray-300">
-              <Text className="text-base text-gray-800 font-semibold mb-2">
+              <Text className="text-base font-artegra text-gray-800 font-semibold mb-2">
                 Rumus Fuse Link Gardu:
               </Text>
-              <Text className="text-base text-gray-700">I = P / (√3 × V)</Text>
-              <Text className="text-sm text-gray-500 italic mt-1">
+              <Text className="text-base font-artegra text-gray-700">
+                I = P / (√3 × V)
+              </Text>
+              <Text className="text-sm font-artegra-italic text-gray-500 mt-1">
                 I = Arus, P = Daya (Watt), V = Tegangan (Volt)
               </Text>
             </View>
@@ -78,13 +88,13 @@ const link = () => {
             />
             {result !== null && (
               <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
-                <Text className="text-xl font-bold text-gray-800 mb-2">
+                <Text className="text-xl font-artegra-bold text-gray-800 mb-2">
                   Hasil Fuse Link Gardu
                 </Text>
-                <Text className="text-gray-800 text-lg font-bold mb-2">
+                <Text className="text-gray-800 font-artegra-bold text-lg mb-2">
                   {result.toFixed(2)} A
                 </Text>
-                <Text className="text-sm text-gray-500 mt-1 italic">
+                <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
                   Ini adalah arus fuse link berdasarkan daya & tegangan yang
                   Anda masukkan.
                 </Text>
@@ -99,8 +109,9 @@ const link = () => {
               className="flex-1"
             />
             <CustomButton
-              onPress={handleSaveToDatabase}
-              text="Simpan"
+              isDisable={isHistoryLoading}
+              onPress={generateNewHistory}
+              text={`${isHistoryLoading ? "Loading..." : "Simpan"}`}
               className="flex-1"
             />
           </View>

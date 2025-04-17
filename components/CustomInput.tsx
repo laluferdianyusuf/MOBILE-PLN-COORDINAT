@@ -61,7 +61,7 @@ export const CustomInput = (
   return (
     <View className={`mb-2 ${style}`}>
       {title && (
-        <Text className="font-inter font-bold text-md capitalize opacity-75">
+        <Text className="font-artegra-bold text-md capitalize opacity-75">
           {title}
         </Text>
       )}
@@ -78,7 +78,7 @@ export const CustomInput = (
           placeholderTextColor={"#94a3b8"}
           secureTextEntry={secureText}
           style={{
-            fontFamily: "Inter",
+            fontFamily: "Artegra",
             color: "black",
           }}
           className={`flex-1`}
@@ -101,7 +101,7 @@ export const CustomInput = (
         ) : null}
       </View>
       {errorMessage && (
-        <Text className="text-custom-error-2 font-inter text-xs">
+        <Text className="text-custom-error-2 font-artegra text-xs">
           {errorMessage}
         </Text>
       )}

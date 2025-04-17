@@ -7,6 +7,7 @@ import { AppDispatch } from "@/redux/store";
 import { router } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   BackHandler,
   Pressable,
   ScrollView,
@@ -29,6 +30,7 @@ const LoginScreen: React.FC = ({}) => {
   const backPressCount = useRef(0);
   const backPressTimer = useRef<NodeJS.Timeout | null>(null);
   const isFocused = useIsFocused();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleBackPress = () => {
@@ -85,6 +87,7 @@ const LoginScreen: React.FC = ({}) => {
   });
 
   const handleLogin = async (data: LoginFormData) => {
+    setIsLoading(true);
     try {
       await dispatch(login(data)).unwrap();
       router.push("/(tabs)");
@@ -100,6 +103,8 @@ const LoginScreen: React.FC = ({}) => {
       } else {
         setApiError("An unexpected error occurred.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -113,10 +118,10 @@ const LoginScreen: React.FC = ({}) => {
           contentContainerClassName="gap-12 justify-center"
         >
           <View className="gap-3">
-            <Text className="font-inter font-bold capitalize text-xl text-custom-light-blue-2">
+            <Text className="font-artegra-bold capitalize text-xl text-custom-light-blue-2">
               Selamat Datang
             </Text>
-            <Text className="font-inter text-justify text-custom-grey-2">
+            <Text className="font-artegra text-justify text-custom-grey-2">
               Selamat datang kembali! Masukkan username dan password Anda untuk
               mengakses akun Anda.
             </Text>
@@ -164,29 +169,34 @@ const LoginScreen: React.FC = ({}) => {
               />
             </View>
             <Pressable
-              // onPress={handleSubmit(handleLogin)}
-              onPress={() => router.push("/(tabs)")}
+              onPress={handleSubmit(handleLogin)}
               className="bg-custom-light-blue-2 p-3 rounded-xl"
             >
-              <Text className="font-inter text-white text-center">Masuk</Text>
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="font-artegra text-white text-center">
+                  Masuk
+                </Text>
+              )}
             </Pressable>
           </View>
           <View className="gap-4">
             <View className="flex-row items-center justify-center gap-3">
               <View className="h-[2px] flex-1 bg-custom-grey-4" />
-              <Text className="font-inter font-bold capitalize text-custom-grey-4">
+              <Text className="font-artegra-bold capitalize text-custom-grey-4">
                 buat akun
               </Text>
               <View className="h-[2px] flex-1 bg-custom-grey-4" />
             </View>
             <View className="flex-row items-center gap-1 justify-center">
-              <Text className="font-inter capitalize text-custom-grey-2">
+              <Text className="font-artegra capitalize text-custom-grey-2">
                 belum mempunyai akun ?
               </Text>
               <Pressable
                 onPress={() => router.push({ pathname: "/(auth)/register" })}
               >
-                <Text className="font-inter font-bold text-custom-light-blue-2">
+                <Text className="font-artegra-bold text-custom-light-blue-2">
                   Daftar
                 </Text>
               </Pressable>

@@ -1,16 +1,23 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { BackButton } from "@/components/BackButton";
 import { router } from "expo-router";
 import { CustomInput } from "@/components/CustomInput";
 import CustomButton from "@/components/CustomButton";
+import { useUserData } from "@/hooks/useUserHooks";
+import { useHistoryData } from "@/hooks/useHistoryHooks";
 
 const substation = () => {
+  const { user, validateUser } = useUserData({});
   const [power, setPower] = useState("");
   const [voltage, setVoltage] = useState("");
   const [line, setLine] = useState(""); // jurusan
   const [nhFuse, setNhFuse] = useState<number | null>(null);
+
+  useEffect(() => {
+    validateUser();
+  }, []);
 
   const handleCalculate = () => {
     const P = parseFloat(power) || 0;
@@ -29,39 +36,31 @@ const substation = () => {
     setNhFuse(fuse);
   };
 
-  const handleSaveToDatabase = () => {};
+  const payload = {
+    category: "nh_fuse_substation",
+    title: "Menentukan NH Fuse Gardu",
+    description: `Hasil mengitung NH Fuse Gardu`,
+    value: {
+      power: power,
+      voltage: voltage,
+      jurusan: line,
+      result: nhFuse,
+    },
+    background: "bg-custom-light-yellow-1",
+  };
 
-  function hitungNHFuseGardu(
-    dayaTrafo: number,
-    teganganTR: number,
-    jumlahJurusan: number
-  ) {
-    const In = dayaTrafo / (teganganTR * Math.sqrt(3));
-    const arusTiapJurusan = In / jumlahJurusan;
-    const NHFuse = arusTiapJurusan * 0.9;
-
-    return {
-      arusTotal: In,
-      arusTiapJurusan,
-      NHFuse,
-    };
-  }
-
-  const daya = 160000;
-  const tegangan = 400;
-  const jurusan = 3;
-
-  const hasil = hitungNHFuseGardu(daya, tegangan, jurusan);
-  console.log(`Arus Total: ${hasil.arusTotal.toFixed(2)} A`);
-  console.log(`Arus Tiap Jurusan: ${hasil.arusTiapJurusan.toFixed(2)} A`);
-  console.log(`NH Fuse (90%): ${hasil.NHFuse.toFixed(2)} A`);
+  const { generateNewHistory, isLoadingGenerate: isHistoryLoading } =
+    useHistoryData({
+      user_id: user.userId,
+      value: payload,
+    });
 
   return (
     <ThemedView className={`flex-1`}>
       <View className="pt-16 pb-6 px-6 flex-1">
         <View className="flex-row items-center justify-between pb-4">
           <BackButton onBack={() => router.back()} />
-          <Text className="font-helvetica-regular text-xl">NH Fuse Gardu</Text>
+          <Text className="font-artegra-bold text-xl">NH Fuse Gardu</Text>
           <View className="opacity-0" />
         </View>
         <ScrollView
@@ -72,38 +71,38 @@ const substation = () => {
         >
           <View className="flex-1">
             <View className="mb-4 p-4 bg-amber-50 rounded-lg border border-yellow-400">
-              <Text className="text-base text-yellow-800 font-semibold mb-2">
+              <Text className="text-base font-artegra-bold text-yellow-800 mb-2">
                 Rumus NH Fuse Gardu:
               </Text>
 
-              <Text className="text-gray-700 mb-1 italic">
-                <Text className="italic">In</Text> = Daya Trafo / (Tegangan TR ×
-                √3)
+              <Text className="text-gray-700 mb-1 font-artegra-italic">
+                <Text className="font-artegra-italic">In</Text> = Daya Trafo /
+                (Tegangan TR × √3)
               </Text>
-              <Text className="text-gray-700 mb-1 italic">
+              <Text className="text-gray-700 mb-1 font-artegra-italic">
                 Arus Tiap Jurusan = In / Jumlah Jurusan
               </Text>
-              <Text className="text-gray-700 mb-1 italic">
+              <Text className="text-gray-700 mb-1 font-artegra-italic">
                 NH Fuse = Arus Tiap Jurusan × 0.9
               </Text>
 
-              <Text className="text-gray-700 mt-2">
+              <Text className="text-gray-700 mt-2 font-artegra">
                 <Text className="font-bold">Keterangan:</Text>
               </Text>
-              <Text className="text-gray-700">
-                - <Text className="font-semibold">Daya Trafo</Text> dalam satuan
-                VA (Volt Ampere)
+              <Text className="text-gray-700 font-artegra">
+                - <Text className="font-artegra-bold">Daya Trafo</Text> dalam
+                satuan VA (Volt Ampere)
               </Text>
-              <Text className="text-gray-700">
-                - <Text className="font-semibold">Tegangan TR</Text> adalah
+              <Text className="text-gray-700 font-artegra">
+                - <Text className="font-artegra-bold">Tegangan TR</Text> adalah
                 tegangan sekunder trafo (biasanya 400 V)
               </Text>
-              <Text className="text-gray-700">
-                - <Text className="font-semibold">Jumlah Jurusan</Text> adalah
-                banyaknya saluran keluar dari gardu
+              <Text className="text-gray-700 font-artegra">
+                - <Text className="font-artegra-bold">Jumlah Jurusan</Text>{" "}
+                adalah banyaknya saluran keluar dari gardu
               </Text>
-              <Text className="text-gray-700">
-                - <Text className="font-semibold">Faktor 0.9</Text> adalah
+              <Text className="text-gray-700 font-artegra">
+                - <Text className="font-artegra-bold">Faktor 0.9</Text> adalah
                 asumsi beban 90% dari trafo
               </Text>
             </View>
@@ -128,13 +127,13 @@ const substation = () => {
 
             {nhFuse !== null && (
               <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
-                <Text className="text-gray-800 text-lg font-bold mb-2">
+                <Text className="text-gray-800 text-lg mb-2 font-artegra-bold">
                   Hasil Perhitungan:
                 </Text>
 
-                <Text className="text-gray-700 text-base">
+                <Text className="text-gray-700 text-base font-artegra">
                   In = P / (V × √3) ={" "}
-                  <Text className="font-bold">
+                  <Text className="font-artegra-bold">
                     {(
                       parseFloat(power) /
                       (parseFloat(voltage) * Math.sqrt(3))
@@ -143,9 +142,9 @@ const substation = () => {
                   </Text>
                 </Text>
 
-                <Text className="text-gray-700 text-base">
+                <Text className="text-gray-700 text-base font-artegra">
                   Arus Tiap Jurusan = In / Jumlah Jurusan ={" "}
-                  <Text className="font-bold">
+                  <Text className="font-artegra-bold">
                     {(
                       parseFloat(power) /
                       (parseFloat(voltage) * Math.sqrt(3) * parseInt(line))
@@ -154,9 +153,11 @@ const substation = () => {
                   </Text>
                 </Text>
 
-                <Text className="text-gray-700 text-base">
+                <Text className="text-gray-700 text-base font-artegra">
                   NH Fuse = Arus Tiap Jurusan × 0.9 ={" "}
-                  <Text className="font-bold">{nhFuse.toFixed(2)} A</Text>
+                  <Text className="font-artegra-bold">
+                    {nhFuse.toFixed(2)} A
+                  </Text>
                 </Text>
               </View>
             )}
@@ -168,8 +169,9 @@ const substation = () => {
               className="flex-1"
             />
             <CustomButton
-              onPress={handleSaveToDatabase}
-              text="Simpan"
+              isDisable={isHistoryLoading}
+              onPress={generateNewHistory}
+              text={`${isHistoryLoading ? "Loading..." : "Simpan"}`}
               className="flex-1"
             />
           </View>

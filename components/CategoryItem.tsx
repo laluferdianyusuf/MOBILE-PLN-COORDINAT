@@ -1,7 +1,5 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@react-navigation/native";
 import { Category } from "@/types/types";
 
 interface CategoryItemProps {
@@ -9,15 +7,9 @@ interface CategoryItemProps {
   handlePress: () => void;
 }
 
-const CategoryItem: React.FC<CategoryItemProps> = (
-  { item, handlePress },
-  ref
-) => {
-  const { colors } = useTheme();
-
+const CategoryItem: React.FC<CategoryItemProps> = ({ item, handlePress }) => {
   return (
     <Pressable
-      ref={ref}
       className={`rounded-3xl items-center justify-center flex-1 ${
         item.color
       } px-3 py-6 ${item.id === "fuse_link" ? "border border-gray-100" : ""}`}
@@ -32,7 +24,7 @@ const CategoryItem: React.FC<CategoryItemProps> = (
           {item.icon}
         </View>
         <View className="text-center items-center">
-          <Text className="font-helvetica-regular text-xl text-center">
+          <Text className="font-artegra-bold text-xl text-center">
             {item.name}
           </Text>
         </View>

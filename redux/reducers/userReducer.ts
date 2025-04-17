@@ -5,24 +5,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { uri } from "@/utils/uri";
 
 // register user
-export const registerUser = createAsyncThunk<UserResponse, User>(
+export const register = createAsyncThunk<UserResponse, User>(
   "user/registrations",
   async (data, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${uri}/api/v1/register/user`, data);
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-// register admin
-export const registerAdmin = createAsyncThunk<UserResponse, User>(
-  "admin/registrations",
-  async (data, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${uri}/api/v1/register/admin`, data);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data);
@@ -63,24 +50,6 @@ export const currentUser = createAsyncThunk<UserResponse, void>(
   }
 );
 
-// Update Account
-export const updateAccount = createAsyncThunk<
-  UserResponse,
-  { id: number; data: User }
->("user/update-account", async ({ id, data }, { rejectWithValue }) => {
-  try {
-    const token = await AsyncStorage.getItem("token");
-    const response = await axios.put(`${uri}/api/v1/update/user/${id}`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data);
-  }
-});
-
 // log out
 export const logout = createAsyncThunk<void, void>(
   "admin/logout",
@@ -113,30 +82,16 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Registration admin states
-      .addCase(registerAdmin.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(registerAdmin.fulfilled, (state, action) => {
-        state.loading = false;
-        state.users = action.payload.data.user;
-      })
-      .addCase(registerAdmin.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
-
       // Registration user states
-      .addCase(registerUser.pending, (state) => {
+      .addCase(register.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
         state.users = action.payload.data.user;
       })
-      .addCase(registerUser.rejected, (state, action) => {
+      .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
@@ -189,21 +144,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
         console.error("Logout error:", action.payload);
-      })
-
-      // update account states
-      .addCase(updateAccount.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(updateAccount.fulfilled, (state, action) => {
-        state.loading = false;
-        state.users = action.payload.data.user;
-      })
-      .addCase(updateAccount.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-        console.error("change error:", action.payload);
       });
   },
 });

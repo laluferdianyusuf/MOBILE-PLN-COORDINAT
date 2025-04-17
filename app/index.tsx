@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import StartScreen from "./screens/StartScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
+import { LoadingWave } from "@/components";
 
 export default function App() {
   const [showStartScreen, setShowStartScreen] = useState<boolean>(false);
@@ -36,11 +37,7 @@ export default function App() {
   }, [isLoggedIn]);
 
   if (isLoading) {
-    return (
-      <View className="bg-custom-purple-1 flex-1 justify-center items-center">
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <LoadingWave />;
   }
 
   if (showStartScreen) {

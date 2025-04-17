@@ -1,17 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, Text, Alert, Pressable, ToastAndroid } from "react-native";
-import MapView, {
-  Marker,
-  Polyline,
-  Callout,
-  LatLng,
-  Polygon,
-} from "react-native-maps";
+import { View, Text, Pressable, ToastAndroid } from "react-native";
+import MapView, { Marker, Polyline, LatLng, Polygon } from "react-native-maps";
 import * as Location from "expo-location";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from "expo-media-library";
 import { BackButton } from "@/components/BackButton";
 import { router } from "expo-router";
+import { useHistoryData } from "@/hooks/useHistoryHooks";
+import { useUserData } from "@/hooks/useUserHooks";
 
 type Coordinate = {
   latitude: number;
@@ -68,6 +64,7 @@ const getAddressFromCoords = async (latitude: number, longitude: number) => {
 };
 
 export default function AngleMapScreen() {
+  const { user, validateUser } = useUserData({});
   const [main, setMain] = useState(null);
   const [pointA, setPointA] = useState(null);
   const [pointB, setPointB] = useState(null);
@@ -76,8 +73,11 @@ export default function AngleMapScreen() {
     null
   );
   const [addressName, setAddressName] = useState<string>("");
-
   const mapRef = useRef<MapView>(null) as React.MutableRefObject<MapView>;
+
+  useEffect(() => {
+    validateUser();
+  }, []);
 
   useEffect(() => {
     if (main && pointA && pointB) {
@@ -154,7 +154,7 @@ export default function AngleMapScreen() {
     setAngle(null);
   };
 
-  const ambilScreenshot = async () => {
+  const takeScreenshot = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== "granted") {
       ToastAndroid.show("Izin media tidak diberikan", ToastAndroid.SHORT);
@@ -177,12 +177,29 @@ export default function AngleMapScreen() {
   if (pointA) coordinates.push(pointA);
   if (pointB) coordinates.push(pointB);
 
+  const payload = {
+    category: "maps",
+    title: "Menentukan Angle",
+    description: `Hasil angle yang di dapatkan ${angle}`,
+    value: {
+      points: currentLocation,
+      address: addressName,
+      angle: angle,
+    },
+    background: "bg-custom-light-blue-1",
+  };
+
+  const { generateNewHistory, isLoadingGenerate: isHistoryLoading } =
+    useHistoryData({
+      user_id: user.userId,
+      value: payload,
+    });
   return (
     <View style={{ flex: 1 }}>
       <View className="absolute top-14 right-2 left-2 z-50 justify-center">
         <View className="flex-row items-center justify-between py-4 px-3 rounded-xl bg-white">
           <BackButton onBack={() => router.back()} />
-          <Text className="font-helvetica-regular text-xl">Peta Sudut</Text>
+          <Text className="font-artegra text-xl">Peta Sudut</Text>
           <View className="opacity-0" />
         </View>
       </View>
@@ -262,7 +279,7 @@ export default function AngleMapScreen() {
 
         {angle && pointA && (
           <Marker coordinate={pointA} anchor={{ x: 0.5, y: 0 }}>
-            <Text className="text-red-500 font-josefin-bold text-base">
+            <Text className="text-red-500 font-artegra text-base">
               {angle}°
             </Text>
           </Marker>
@@ -271,46 +288,47 @@ export default function AngleMapScreen() {
 
       <View className="absolute bottom-5 left-3 right-3 gap-2">
         <View>
-          <Text className="font-josefin-bold text-2xl">Sudut: {angle}°</Text>
+          <Text className="font-artegra text-2xl">Sudut: {angle}°</Text>
         </View>
         <Pressable
           onPress={() => takePoint(setMain)}
           className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
-          <Text className="font-helvetica-regular self-center">
-            Tentukan Point 1
-          </Text>
+          <Text className="font-artegra self-center">Tentukan Point 1</Text>
         </Pressable>
         <Pressable
           onPress={() => takePoint(setPointA)}
           className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
-          <Text className="font-helvetica-regular self-center">
-            Tentukan Point 2
-          </Text>
+          <Text className="font-artegra self-center">Tentukan Point 2</Text>
         </Pressable>
         <Pressable
           onPress={() => takePoint(setPointB)}
           className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
-          <Text className="font-helvetica-regular self-center">
-            Tentukan Point 3
-          </Text>
+          <Text className="font-artegra self-center">Tentukan Point 3</Text>
         </Pressable>
         <Pressable
           onPress={resetPoint}
           className="bg-gray-50 p-1 rounded-xl border border-gray-200 "
         >
-          <Text className="font-helvetica-regular self-center">
-            Reset Titik
+          <Text className="font-artegra self-center">Reset Titik</Text>
+        </Pressable>
+        <Pressable
+          onPress={takeScreenshot}
+          className="bg-gray-50 p-1 rounded-xl border border-gray-200"
+        >
+          <Text className="font-artegra self-center">
+            Simpan Map Ke Gallery
           </Text>
         </Pressable>
         <Pressable
-          onPress={ambilScreenshot}
+          disabled={isHistoryLoading}
+          onPress={generateNewHistory}
           className="bg-gray-50 p-1 rounded-xl border border-gray-200"
         >
-          <Text className="font-helvetica-regular self-center">
-            Simpan Map Ke Gallery
+          <Text className="font-artegra self-center">
+            {isHistoryLoading ? "Loading..." : "Simpan Data"}
           </Text>
         </Pressable>
       </View>

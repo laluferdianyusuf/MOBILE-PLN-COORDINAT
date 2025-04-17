@@ -1,37 +1,25 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { BackButton } from "@/components/BackButton";
 import { router } from "expo-router";
 import { CustomInput } from "@/components/CustomInput";
 import CustomButton from "@/components/CustomButton";
+import { useHistoryData } from "@/hooks/useHistoryHooks";
+import { useUserData } from "@/hooks/useUserHooks";
 
 const mcb = () => {
-  function hitungMCB1Phase(daya: number, tegangan: number) {
-    return daya / tegangan;
-  }
-
-  function hitungMCB3Phase(daya: number, tegangan: number) {
-    return daya / (tegangan * Math.sqrt(3));
-  }
-
-  const daya = 2200;
-  const tegangan1Ph = 220;
-  const tegangan3Ph = 380;
-
-  const arus1Phase = hitungMCB1Phase(daya, tegangan1Ph);
-  const arus3Phase = hitungMCB3Phase(daya, tegangan3Ph);
-
-  console.log(`MCB 1 Phase: ${arus1Phase.toFixed(2)} A`);
-  console.log(`MCB 3 Phase: ${arus3Phase.toFixed(2)} A`);
-
+  const { user, validateUser } = useUserData({});
   const [power1, setPower1] = useState("");
   const [voltage1, setVoltage1] = useState("");
   const [result1, setResult1] = useState<number | null>(null);
-
   const [power3, setPower3] = useState("");
   const [voltage3, setVoltage3] = useState("");
   const [result3, setResult3] = useState<number | null>(null);
+
+  useEffect(() => {
+    validateUser();
+  }, []);
 
   const calculateMCB1 = () => {
     const P = parseFloat(power1);
@@ -51,16 +39,29 @@ const mcb = () => {
     }
   };
 
-  const handleSaveToDatabase = () => {};
+  const payload = {
+    category: "mcb",
+    title: "Menentukan MCB",
+    description: `Hasil mengitung MCB`,
+    value: {
+      value_1phase: result1,
+      value_3phase: result3,
+    },
+    background: "bg-custom-light-purple-1",
+  };
+
+  const { generateNewHistory, isLoadingGenerate: isHistoryLoading } =
+    useHistoryData({
+      user_id: user.userId,
+      value: payload,
+    });
 
   return (
     <ThemedView className={`flex-1`}>
       <View className="pt-16 pb-6 px-6 flex-1">
         <View className="flex-row items-center justify-between pb-4">
           <BackButton onBack={() => router.back()} />
-          <Text className="font-helvetica-regular text-xl">
-            Perhitungan MCB
-          </Text>
+          <Text className="font-artegra text-xl">Perhitungan MCB</Text>
           <View className="opacity-0" />
         </View>
         <ScrollView
@@ -71,11 +72,13 @@ const mcb = () => {
         >
           <View className="flex-1">
             <View className="mb-4 p-4 rounded-xl bg-purple-100">
-              <Text className="text-purple-900 font-bold text-lg mb-2">
+              <Text className="text-purple-900 text-lg mb-2 font-artegra-bold">
                 MCB 1 Phase
               </Text>
-              <Text className="text-base text-gray-700">Rumus: I = P / V</Text>
-              <Text className="text-sm text-gray-500 italic mt-1">
+              <Text className="text-base text-gray-700 font-artegra">
+                Rumus: I = P / V
+              </Text>
+              <Text className="text-sm font-artegra-italic text-gray-500 mt-1">
                 I = Arus (A), P = Daya (Watt), V = Tegangan (Volt)
               </Text>
             </View>
@@ -94,14 +97,14 @@ const mcb = () => {
 
             {result1 !== null && (
               <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
-                <Text className="text-gray-800 text-lg font-bold mb-2">
+                <Text className="font-artegra-bold text-gray-800 text-lg mb-2">
                   Hasil MCB 1 Phase:
                 </Text>
-                <Text className="text-gray-700 text-base">
+                <Text className="text-gray-700 text-base font-artegra">
                   Arus = {result1.toFixed(2)} A {"\n"}
                   Saran MCB = {Math.ceil(result1)} A
                 </Text>
-                <Text className="text-sm text-gray-500 mt-1 italic">
+                <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
                   Ini adalah hasil perhitungan MCB 1 Phase berdasarkan daya &
                   tegangan yang Anda masukkan.
                 </Text>
@@ -109,13 +112,13 @@ const mcb = () => {
             )}
 
             <View className="mb-4 mt-3 p-4 rounded-xl bg-purple-100">
-              <Text className="text-purple-900 font-bold text-lg mb-2">
+              <Text className="text-purple-900 text-lg mb-2 font-artegra-bold">
                 MCB 3 Phase
               </Text>
-              <Text className="text-base text-gray-700">
+              <Text className="text-base text-gray-700 font-artegra">
                 Rumus: I = P / (√3 × V)
               </Text>
-              <Text className="text-sm text-gray-500 italic mt-1">
+              <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
                 I = Arus (A), P = Daya (Watt), V = Tegangan (Volt)
               </Text>
             </View>
@@ -133,14 +136,14 @@ const mcb = () => {
             />
             {result3 !== null && (
               <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
-                <Text className="text-gray-800 text-lg font-bold mb-2">
+                <Text className="text-gray-800 text-lg mb-2 font-artegra-bold">
                   Hasil MCB 3 Phase:
                 </Text>
-                <Text className="text-gray-700 text-base">
+                <Text className="text-gray-700 text-base font-artegra">
                   Arus = {result3.toFixed(2)} A {"\n"}
                   Saran MCB = {Math.ceil(result3)} A
                 </Text>
-                <Text className="text-sm text-gray-500 mt-1 italic">
+                <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
                   Ini adalah hasil perhitungan MCB 3 Phase berdasarkan daya &
                   tegangan yang Anda masukkan.
                 </Text>
@@ -159,8 +162,9 @@ const mcb = () => {
               className="flex-1 items-center justify-center"
             />
             <CustomButton
-              onPress={handleSaveToDatabase}
-              text="Simpan"
+              isDisable={isHistoryLoading}
+              onPress={generateNewHistory}
+              text={`${isHistoryLoading ? "Loading..." : "Simpan"}`}
               className="flex-1 items-center justify-center"
             />
           </View>

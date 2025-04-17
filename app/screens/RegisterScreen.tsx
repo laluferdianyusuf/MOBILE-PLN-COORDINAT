@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { registerAdmin, registerUser } from "@/redux/reducers";
+import { register } from "@/redux/reducers";
 
 interface RegisterScreenProps {
   isAdmin?: string;
@@ -46,7 +46,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ isAdmin }) => {
       .string({
         required_error: "Alamat tidak boleh kosong",
       })
-      .min(4, "Alamat harus memiliki minimal 4 karakter")
       .startsWith("Jl.", "Alamat harus diawali dengan 'JL.'"),
     password: z
       .string({
@@ -66,13 +65,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ isAdmin }) => {
 
   const handleRegister = async (data: RegisterFormData) => {
     try {
-      if (isAdmin === "true") {
-        const res = await dispatch(registerAdmin(data)).unwrap();
-        console.log(res);
-      } else {
-        const res = await dispatch(registerUser(data)).unwrap();
-        console.log(res);
-      }
+      const res = await dispatch(register(data)).unwrap();
       router.push("/(auth)/login");
     } catch (error: any) {
       console.log(error);
@@ -110,10 +103,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ isAdmin }) => {
           contentContainerClassName="gap-12 justify-center"
         >
           <View className="gap-3">
-            <Text className="font-inter font-bold capitalize text-xl text-custom-light-blue-2">
+            <Text className="font-artegra-bold capitalize text-xl text-custom-light-blue-2">
               Daftarkan diri
             </Text>
-            <Text className="font-inter text-justify text-custom-grey-2">
+            <Text className="font-artegra text-justify text-custom-grey-2">
               Bergabunglah dengan kami! Daftarkan diri untuk menikmati layanan
               lengkap.
             </Text>
@@ -221,23 +214,25 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ isAdmin }) => {
               onPress={handleSubmit(handleRegister)}
               className="bg-custom-light-blue-2 p-3 rounded-xl"
             >
-              <Text className="font-inter text-white text-center">Daftar</Text>
+              <Text className="font-artegra text-white text-center">
+                Daftar
+              </Text>
             </Pressable>
           </View>
           <View className="gap-4">
             <View className="flex-row items-center justify-center gap-3">
               <View className="h-[2px] flex-1 bg-custom-grey-4" />
-              <Text className="font-inter font-bold capitalize text-custom-grey-4">
+              <Text className="font-artegra-bold capitalize text-custom-grey-4">
                 masuk ke akun
               </Text>
               <View className="h-[2px] flex-1 bg-custom-grey-4" />
             </View>
             <View className="flex-row items-center gap-1 justify-center">
-              <Text className="font-inter capitalize text-custom-grey-2">
+              <Text className="font-artegra capitalize text-custom-grey-2">
                 sudah mempunyai akun ?
               </Text>
               <Pressable onPress={handleRouter}>
-                <Text className="font-inter font-bold text-custom-light-blue-2 capitalize">
+                <Text className="font-artegra-bold text-custom-light-blue-2 capitalize">
                   masuk
                 </Text>
               </Pressable>

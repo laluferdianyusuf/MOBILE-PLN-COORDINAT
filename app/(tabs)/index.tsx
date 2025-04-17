@@ -1,99 +1,36 @@
 import {
   BackHandler,
-  Dimensions,
   FlatList,
   Pressable,
   Text,
   ToastAndroid,
   View,
 } from "react-native";
-import React, { useEffect, useRef } from "react";
-import {
-  BezierCurve,
-  CarBattery,
-  ClockClockwise,
-  Compass,
-  Intersection,
-  Plugs,
-  Question,
-  SubsetOf,
-  SupersetOf,
-} from "phosphor-react-native";
+import React, { useCallback, useEffect, useRef } from "react";
+import { ClockClockwise, Plugs, PlugsConnected } from "phosphor-react-native";
 import { Category } from "@/types/types";
 import { ThemedView } from "@/components/ThemedView";
 import CategoryItem from "@/components/CategoryItem";
 import { router } from "expo-router";
 import { useIsFocused } from "@react-navigation/native";
-import { CopilotStep, useCopilot, walkthroughable } from "react-native-copilot";
-
-const CopilotPressable = walkthroughable(Pressable);
-const CopilotView = walkthroughable(View);
-
-const { width } = Dimensions.get("window");
-const ITEM_WIDTH = (width - 50) / 2;
-
-const category: Category[] = [
-  {
-    id: "maps",
-    name: "Peta Sudut",
-    icon: <Compass size={35} color="black" />,
-    desc: "More about teacher",
-    primary: "bg-custom-info-1",
-    color: "bg-custom-light-blue-1",
-    uri: "/(category)/maps",
-  },
-  {
-    id: "fuse_link",
-    name: "Fuse Link",
-    icon: <SubsetOf size={35} color="black" />,
-    desc: "More about student",
-    primary: "bg-custom-warning-1",
-    color: "bg-custom-grey-5",
-    uri: "/(category)/link",
-  },
-  {
-    id: "fuse_link_branch",
-    name: "Fuse Link Percabangan",
-    icon: <SupersetOf size={35} color="black" />,
-    desc: "More about attendance",
-    primary: "bg-custom-success-1",
-    color: "bg-custom-light-green-1",
-    uri: "/(category)/branch",
-  },
-  {
-    id: "nh_fuse_substation",
-    name: "NH Fuse Gardu",
-    icon: <Intersection size={35} color="black" />,
-    desc: "More about calendar",
-    primary: "bg-custom-indigo-1",
-    color: "bg-custom-light-yellow-1",
-    uri: "/(category)/substation",
-  },
-  {
-    id: "mcb",
-    name: "MCB",
-    icon: <CarBattery size={35} color="black" />,
-    desc: "More about calendar",
-    primary: "bg-custom-indigo-1",
-    color: "bg-custom-light-purple-1",
-    uri: "/(category)/mcb",
-  },
-  {
-    id: "balancer",
-    name: "Penyeimbang Beban gardu",
-    icon: <BezierCurve size={35} color="black" />,
-    desc: "More about calendar",
-    primary: "bg-custom-indigo-1",
-    color: "bg-custom-error-1",
-    uri: "/(category)/balancer",
-  },
-];
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+} from "@gorhom/bottom-sheet";
+import { category } from "@/utils/category";
+import { useUserData } from "@/hooks/useUserHooks";
+import { LoadingWave } from "@/components";
 
 const index = () => {
   const backPressCount = useRef(0);
   const backPressTimer = useRef<NodeJS.Timeout | null>(null);
   const isFocused = useIsFocused();
-  const { start } = useCopilot();
+  // ref
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     const handleBackPress = () => {
@@ -127,85 +64,138 @@ const index = () => {
     };
   }, [isFocused]);
 
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  const handleCloseModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.dismiss();
+  }, []);
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
+
+  const { user, validateUser, handleLogout, isLoading } = useUserData({
+    closeModal: handleCloseModalPress,
+  });
+
+  useEffect(() => {
+    validateUser();
+  }, []);
+
   const handlePressItem = (item: Category) => {
     router.push({
       pathname: item.uri as any,
     });
   };
+
   return (
     <ThemedView className={`flex-1`}>
-      <View className="pt-16 pb-6 px-6 flex-1 gap-7">
-        <View className="flex-row justify-between">
-          <CopilotStep
-            text="Klik di sini untuk melihat tips penggunaan aplikasi."
-            order={1}
-            name="bantuan"
-          >
-            <CopilotPressable
-              className="p-2 rounded-full bg-gray-100"
-              onPress={() => start()}
+      {isLoading ? (
+        <LoadingWave />
+      ) : (
+        <GestureHandlerRootView className="flex-1 justify-center">
+          <BottomSheetModalProvider>
+            <BottomSheetModal
+              containerStyle={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
+              ref={bottomSheetModalRef}
+              onChange={handleSheetChanges}
+              $modal
+              enableDismissOnClose={true}
+              enablePanDownToClose={true}
+              backdropComponent={renderBackdrop}
             >
-              <Question size={32} color="black" />
-            </CopilotPressable>
-          </CopilotStep>
-          <View className="flex-row items-center gap-3">
-            <CopilotStep
-              text="Ini tombol riwayat aktivitas."
-              order={2}
-              name="riwayat"
-            >
-              <CopilotPressable className="p-2 rounded-full bg-gray-100">
-                <ClockClockwise size={32} color="black" />
-              </CopilotPressable>
-            </CopilotStep>
+              <BottomSheetView className="items-center py-5 px-5">
+                <View className="p-4 bg-custom-error-1 rounded-full mb-5">
+                  <Plugs size={50} color="#de5757" />
+                </View>
+                <Text className="font-artegra-bold text-xl mb-3">
+                  Keluar dari aplikasi?
+                </Text>
 
-            <CopilotStep
-              text="Keluar dari aplikasi dengan menekan ini."
-              order={3}
-              name="keluar"
-            >
-              <CopilotPressable className="p-2 rounded-full bg-custom-error-1">
-                <Plugs size={32} color="#de5757" />
-              </CopilotPressable>
-            </CopilotStep>
-          </View>
-        </View>
-        <View className="mt-[45px]">
-          <Text className="text-5xl font-helvetica-regular">Hi User, </Text>
-          <Text className="text-5xl font-helvetica-regular">
-            How can i help you today?{" "}
-          </Text>
-        </View>
-        <View className="flex-1">
-          <FlatList
-            data={category}
-            renderItem={({ item, index }) => (
-              <CopilotStep
-                key={item.id}
-                text={`Klik untuk membuka fitur ${item.name}`}
-                order={5 + index}
-                name={`fitur-${item.id}`}
-              >
-                <CopilotView style={{ width: ITEM_WIDTH }}>
-                  <CategoryItem
-                    item={item}
-                    handlePress={() => handlePressItem(item)}
-                  />
-                </CopilotView>
-              </CopilotStep>
-            )}
-            keyExtractor={(item) => item.id}
-            numColumns={2}
-            columnWrapperStyle={{ gap: 5 }}
-            contentContainerStyle={{
-              rowGap: 5,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
-      </View>
+                <Text className="font-artegra text-gray-500 text-sm text-center mb-5">
+                  Semua data koordinat dan hasil perhitunganmu sudah tersimpan.
+                  Silakan kembali kapan saja!
+                </Text>
+
+                <View className="gap-4 flex-col w-full">
+                  <Pressable
+                    className="bg-custom-error-2 items-center justify-center py-3 rounded-full"
+                    onPress={handleLogout}
+                  >
+                    <Text className="font-artegra-bold text-white">
+                      Ya, Keluar
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    className="py-3 items-center justify-center"
+                    onPress={handleCloseModalPress}
+                  >
+                    <Text className="font-artegra-bold text-gray-500">
+                      Tidak, Tetap disini
+                    </Text>
+                  </Pressable>
+                </View>
+              </BottomSheetView>
+            </BottomSheetModal>
+            <View className="pt-16 pb-6 px-6 flex-1 gap-7">
+              <View className="flex-row justify-between item-center">
+                <Pressable
+                  className="p-2 rounded-full bg-gray-100"
+                  onPress={() => router.push("/screens/history")}
+                >
+                  <ClockClockwise size={32} color="black" />
+                </Pressable>
+
+                <Pressable
+                  className="p-2 rounded-full bg-custom-error-1"
+                  onPress={handlePresentModalPress}
+                >
+                  <PlugsConnected size={32} color="#de5757" />
+                </Pressable>
+              </View>
+              <View className="mt-[35px]">
+                <Text className="text-4xl font-artegra-bold capitalize">
+                  Hi {user.username},{" "}
+                </Text>
+                <Text className="text-4xl font-artegra-bold">
+                  Pilih fitur yang kamu butuhkan.
+                </Text>
+              </View>
+              <View className="flex-1">
+                <FlatList
+                  data={category}
+                  renderItem={({ item, index }) => (
+                    <CategoryItem
+                      item={item}
+                      handlePress={() => handlePressItem(item)}
+                    />
+                  )}
+                  keyExtractor={(item) => item.id}
+                  numColumns={2}
+                  columnWrapperStyle={{ gap: 5 }}
+                  contentContainerStyle={{
+                    rowGap: 5,
+                  }}
+                  showsVerticalScrollIndicator={false}
+                />
+              </View>
+            </View>
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      )}
     </ThemedView>
   );
 };
