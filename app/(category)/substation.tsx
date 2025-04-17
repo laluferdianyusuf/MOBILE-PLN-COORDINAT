@@ -111,18 +111,21 @@ const substation = () => {
               value={power}
               onChange={(text) => setPower(text)}
               placeholder="Contoh: 200000"
+              keyboard="numeric"
             />
             <CustomInput
               title="Masukkan Tegangan"
               value={voltage}
               onChange={(text) => setVoltage(text)}
               placeholder="Contoh: 400"
+              keyboard="numeric"
             />
             <CustomInput
               title="Masukkan Jumlah Jurusan"
               value={line}
               onChange={(text) => setLine(text)}
               placeholder="Contoh: 4"
+              keyboard="numeric"
             />
 
             {nhFuse !== null && (

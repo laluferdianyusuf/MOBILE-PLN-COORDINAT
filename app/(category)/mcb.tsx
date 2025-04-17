@@ -87,12 +87,14 @@ const mcb = () => {
               value={power1}
               onChange={(text) => setPower1(text)}
               placeholder="Contoh: 1300"
+              keyboard="numeric"
             />
             <CustomInput
               title="Masukkan Tegangan (Volt)"
               value={voltage1}
               onChange={(text) => setVoltage1(text)}
               placeholder="Contoh: 220"
+              keyboard="numeric"
             />
 
             {result1 !== null && (
