@@ -61,7 +61,8 @@ export interface History {
   category?:
     | ""
     | "maps"
-    | "mcb"
+    | "mcb_1_phase"
+    | "mcb_3_phase"
     | "fuse_link"
     | "fuse_link_branch"
     | "nh_fuse_substation"

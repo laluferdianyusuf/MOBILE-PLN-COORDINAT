@@ -56,7 +56,7 @@ const balancer = () => {
   return (
     <ThemedView className={`flex-1`}>
       <View className="pt-16 pb-6 px-6 flex-1">
-        <View className="flex-row items-center justify-between pb-4">
+        <View className="flex-row items-center justify-between pb-6">
           <BackButton onBack={() => router.back()} />
           <Text className="font-artegra-bold text-xl">
             Penyeimbang Beban Gardu

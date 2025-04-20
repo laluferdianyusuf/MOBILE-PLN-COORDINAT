@@ -5,36 +5,38 @@ import { BackButton } from "@/components/BackButton";
 import { router } from "expo-router";
 import { CustomInput } from "@/components/CustomInput";
 import CustomButton from "@/components/CustomButton";
-import { useUserData } from "@/hooks/useUserHooks";
 import { useHistoryData } from "@/hooks/useHistoryHooks";
+import { useUserData } from "@/hooks/useUserHooks";
 
-const link = () => {
+const first = () => {
   const { user, validateUser } = useUserData({});
-  const [power, setPower] = useState<string>("");
-  const [voltage, setVoltage] = useState<string>("");
-  const [result, setResult] = useState<number | null>(null);
+  const [power1, setPower1] = useState("");
+  const [voltage1, setVoltage1] = useState("");
+  const [result1, setResult1] = useState<number | null>(null);
 
   useEffect(() => {
     validateUser();
   }, []);
 
-  const handleFuseLink = () => {
-    const POWER = parseFloat(power) || 0;
-    const VOLTAGE = parseFloat(voltage) || 0;
-    const fuseLinkResult = POWER / (VOLTAGE * Math.sqrt(3));
-    setResult(fuseLinkResult);
+  const calculateMCB1 = () => {
+    const P = parseFloat(power1);
+    const V = parseFloat(voltage1);
+    if (P && V) {
+      const I = P / V;
+      setResult1(I);
+    }
   };
 
   const payload = {
-    category: "fuse_link",
-    title: "Menghitung Fuse Link Gardu",
-    description: `Hasil perhitungan Fuse Link Gardu`,
+    category: "mcb_1_phase",
+    title: "MCB 1 Phase",
+    description: `Hasil mengitung MCB 1 Phase`,
     value: {
-      power: power,
-      voltage: voltage,
-      result: result,
+      power: power1,
+      voltage: voltage1,
+      result: result1,
     },
-    background: "bg-custom-grey-5",
+    background: "bg-custom-light-purple-1",
   };
 
   const { generateNewHistory, isLoadingGenerate: isHistoryLoading } =
@@ -46,9 +48,9 @@ const link = () => {
   return (
     <ThemedView className={`flex-1`}>
       <View className="pt-16 pb-6 px-6 flex-1">
-        <View className="flex-row items-center justify-between pb-6">
+        <View className="flex-row items-center justify-between pb-4">
           <BackButton onBack={() => router.back()} />
-          <Text className="font-artegra text-xl">Perhitungan Fuse Link</Text>
+          <Text className="font-artegra text-xl">MCB 1 Phase</Text>
           <View className="opacity-0" />
         </View>
         <ScrollView
@@ -58,61 +60,60 @@ const link = () => {
           contentContainerClassName="justify-center"
         >
           <View className="flex-1">
-            <View className="mb-4 p-4 bg-gray-100 rounded-lg border border-gray-300">
-              <Text className="text-base font-artegra text-gray-800 font-semibold mb-2">
-                Rumus Fuse Link Gardu:
+            <View className="mb-4 p-4 rounded-xl bg-purple-100">
+              <Text className="text-purple-900 text-lg mb-2 font-artegra-bold">
+                MCB 1 Phase
               </Text>
-              <Text className="text-base font-artegra text-gray-700">
-                I = P / (√3 × V)
+              <Text className="text-base text-gray-700 font-artegra">
+                Rumus: I = P / V
               </Text>
               <Text className="text-sm font-artegra-italic text-gray-500 mt-1">
-                I = Arus, P = Daya (Watt), V = Tegangan (Volt)
+                I = Arus (A), P = Daya (Watt), V = Tegangan (Volt)
               </Text>
             </View>
+            <CustomInput
+              title="Masukkan Daya (Watt)"
+              value={power1}
+              onChange={(text) => setPower1(text)}
+              placeholder="Contoh: 1300"
+              keyboard="numeric"
+            />
+            <CustomInput
+              title="Masukkan Tegangan (Volt)"
+              value={voltage1}
+              onChange={(text) => setVoltage1(text)}
+              placeholder="Contoh: 220"
+              keyboard="numeric"
+            />
 
-            <CustomInput
-              value={power}
-              style=""
-              placeholder="Contoh : 100000"
-              title="Masukan Daya"
-              onChange={(text) => setPower(text)}
-              keyboard="numeric"
-            />
-            <CustomInput
-              value={voltage}
-              style=""
-              placeholder="Contoh : 20000"
-              title="Masukan Tegangan"
-              onChange={(text) => setVoltage(text)}
-              keyboard="numeric"
-            />
-            {result !== null && (
+            {result1 !== null && (
               <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
-                <Text className="text-xl font-artegra-bold text-gray-800 mb-2">
-                  Hasil Fuse Link Gardu
+                <Text className="font-artegra-bold text-gray-800 text-lg mb-2">
+                  Hasil MCB 1 Phase:
                 </Text>
-                <Text className="text-gray-800 font-artegra-bold text-lg mb-2">
-                  {result.toFixed(2)} A
+                <Text className="text-gray-700 text-base font-artegra">
+                  Arus = {result1.toFixed(2)} A {"\n"}
+                  Saran MCB = {Math.ceil(result1)} A
                 </Text>
                 <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
-                  Ini adalah arus fuse link berdasarkan daya & tegangan yang
-                  Anda masukkan.
+                  Ini adalah hasil perhitungan MCB 1 Phase berdasarkan daya &
+                  tegangan yang Anda masukkan.
                 </Text>
               </View>
             )}
           </View>
-
           <View className="flex flex-row gap-3">
             <CustomButton
-              onPress={handleFuseLink}
-              text="Hitung"
-              className="flex-1"
+              onPress={calculateMCB1}
+              text="Hitung MCB 1 Phase"
+              className="flex-1 items-center justify-center"
             />
+
             <CustomButton
               isDisable={isHistoryLoading}
               onPress={generateNewHistory}
               text={`${isHistoryLoading ? "Loading..." : "Simpan"}`}
-              className="flex-1"
+              className="flex-1 items-center justify-center"
             />
           </View>
         </ScrollView>
@@ -121,4 +122,4 @@ const link = () => {
   );
 };
 
-export default link;
+export default first;

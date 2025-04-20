@@ -7,21 +7,21 @@ import Swiper from "react-native-swiper";
 const slides = [
   {
     image: require("@/assets/images/first.png"),
-    title: "Selamat Datang",
+    title: "Selamat Datang di Ampere Pro",
     description:
-      "Aduanku hadir sebagai wadah yang aman dan terpercaya untuk menyampaikan laporan kekerasan. Bersama kita wujudkan lingkungan yang lebih baik.",
+      "Aplikasi teknisi PLN yang membantu mempermudah pekerjaan lapangan, mulai dari kalkulasi fuse, MCB, hingga pengukuran sudut di peta.",
   },
   {
     image: require("@/assets/images/second.png"),
-    title: "Layanan Cepat dan Responsif",
+    title: "Hitung Otomatis & Akurat",
     description:
-      "Laporkan insiden dengan mudah dan cepat. Aduanku akan memastikan laporan Anda diteruskan ke pihak terkait secara tepat dan responsif.",
+      "Dapatkan hasil perhitungan fuse dan MCB secara instan dan tepat. Tidak perlu lagi menghitung manual, semua siap dalam genggaman Anda.",
   },
   {
     image: require("@/assets/images/third.png"),
-    title: "Privasi Anda adalah Prioritas Kami",
+    title: "Pantau Lokasi & Sudut Titik",
     description:
-      "Setiap laporan dijaga kerahasiaannya dengan baik. Mulai sekarang, Anda tidak sendirian. Daftar atau login untuk memulai.",
+      "Gunakan fitur peta interaktif untuk menentukan titik dan sudut antar koordinat dengan mudah, serta simpan hasilnya ke histori.",
   },
 ];
 
@@ -88,7 +88,9 @@ const StartScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             <View
               key={index}
               className={` h-1 rounded-full ${
-                activeIndex === index ? "bg-[#2fabe0] w-5" : "bg-[#fff4bf] w-2"
+                activeIndex === index
+                  ? "bg-[#2fabe0] w-5"
+                  : "bg-custom-grey-2 w-2"
               }`}
             />
           ))}

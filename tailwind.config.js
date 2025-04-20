@@ -41,6 +41,8 @@ module.exports = {
         "custom-light-yellow-1": "#fff4bf",
         "custom-light-green-1": "#e0f7dc",
         "custom-light-purple-1": "#ede4f5",
+        "custom-light-purple-2": "#dbc8ea",
+        "custom-light-purple-3": "#ac81cb",
       },
       fontFamily: {
         "space-mono": ["SpaceMono", "sans-serif"],

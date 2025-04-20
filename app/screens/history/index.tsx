@@ -131,7 +131,9 @@ export default function HistoryList() {
             ? "penyeimbang"
             : item.category === "maps"
             ? "maps"
-            : "mcb"}
+            : item.category === "mcb_1_phase"
+            ? "1 phase"
+            : "3 phase"}
         </Text>
       </View>
     </Pressable>
