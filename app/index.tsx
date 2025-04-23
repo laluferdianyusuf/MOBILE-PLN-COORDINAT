@@ -6,6 +6,7 @@ import StartScreen from "./screens/StartScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
 import { LoadingWave } from "@/components";
+import OnBoarding from "@/components/OnBoarding";
 
 export default function App() {
   const [showStartScreen, setShowStartScreen] = useState<boolean>(false);
@@ -42,7 +43,7 @@ export default function App() {
 
   if (showStartScreen) {
     return (
-      <StartScreen
+      <OnBoarding
         onComplete={async () => {
           await AsyncStorage.setItem("hasSeenStartScreen", "true");
           setShowStartScreen(false);

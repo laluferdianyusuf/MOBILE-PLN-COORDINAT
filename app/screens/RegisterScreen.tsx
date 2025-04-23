@@ -156,7 +156,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ isAdmin }) => {
                 name="address"
                 render={({ field: { onChange, value } }) => (
                   <CustomInput
-                    placeholder="Aalamat"
+                    placeholder="Alamat"
                     value={value}
                     keyboard="default"
                     onChange={onChange}

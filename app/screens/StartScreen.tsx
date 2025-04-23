@@ -1,29 +1,9 @@
 import { ThemedView } from "@/components/ThemedView";
+import { slides } from "@/utils/category";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
 import { Text, View, Image, Pressable } from "react-native";
 import Swiper from "react-native-swiper";
-
-const slides = [
-  {
-    image: require("@/assets/images/first.png"),
-    title: "Selamat Datang di Ampere Pro",
-    description:
-      "Aplikasi teknisi PLN yang membantu mempermudah pekerjaan lapangan, mulai dari kalkulasi fuse, MCB, hingga pengukuran sudut di peta.",
-  },
-  {
-    image: require("@/assets/images/second.png"),
-    title: "Hitung Otomatis & Akurat",
-    description:
-      "Dapatkan hasil perhitungan fuse dan MCB secara instan dan tepat. Tidak perlu lagi menghitung manual, semua siap dalam genggaman Anda.",
-  },
-  {
-    image: require("@/assets/images/third.png"),
-    title: "Pantau Lokasi & Sudut Titik",
-    description:
-      "Gunakan fitur peta interaktif untuk menentukan titik dan sudut antar koordinat dengan mudah, serta simpan hasilnya ke histori.",
-  },
-];
 
 const StartScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -49,7 +29,7 @@ const StartScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   };
 
   return (
-    <ThemedView className="flex-1">
+    <ThemedView className="flex-1 ">
       <View className="pt-16 pb-6 flex-1 gap-14 justify-center items-center">
         <View className="flex-row items-center justify-center pb-4">
           <Text className="font-artegra-bold text-xl">Ampere Pro</Text>

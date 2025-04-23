@@ -3,3 +3,8 @@ export * from "./BackButton";
 export * from "./CustomInput";
 export * from "./LoadingWave";
 export * from "./CustomModal";
+export * from "./OnBoarding";
+export * from "./OnBoardingItem";
+export * from "./Paginator";
+export * from "./NextButton";
+export * from "./PrevButton";

@@ -64,3 +64,27 @@ export const category: Category[] = [
     uri: "/(category)/balancer",
   },
 ];
+
+export const slides = [
+  {
+    id: "1",
+    image: require("@/assets/images/first.png"),
+    title: "Selamat Datang di Ampere Pro",
+    description:
+      "Aplikasi teknisi PLN yang membantu mempermudah pekerjaan lapangan, mulai dari kalkulasi fuse, MCB, hingga pengukuran sudut di peta.",
+  },
+  {
+    id: "2",
+    image: require("@/assets/images/second.png"),
+    title: "Hitung Otomatis & Akurat",
+    description:
+      "Dapatkan hasil perhitungan fuse dan MCB secara instan dan tepat. Tidak perlu lagi menghitung manual, semua siap dalam genggaman Anda.",
+  },
+  {
+    id: "3",
+    image: require("@/assets/images/third.png"),
+    title: "Pantau Lokasi & Sudut Titik",
+    description:
+      "Gunakan fitur peta interaktif untuk menentukan titik dan sudut antar koordinat dengan mudah, serta simpan hasilnya ke histori.",
+  },
+];
