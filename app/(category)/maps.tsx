@@ -68,7 +68,8 @@ export default function AngleMapScreen() {
   const [main, setMain] = useState(null);
   const [pointA, setPointA] = useState(null);
   const [pointB, setPointB] = useState(null);
-  const [angle, setAngle] = useState<String | null>(null);
+  const [angle, setAngle] = useState<string | null>(null);
+  const [tm, setTM] = useState<string | null>(null);
   const [currentLocation, setCurrentLocation] = useState<Coordinate | null>(
     null
   );
@@ -83,6 +84,19 @@ export default function AngleMapScreen() {
     if (main && pointA && pointB) {
       const result = getAngleBetweenPoints(pointA, main, pointB);
       setAngle(result);
+      const angleNumber = parseFloat(result);
+
+      if (angleNumber >= 170 && angleNumber <= 180) {
+        setTM("TM 1");
+      } else if (angleNumber >= 150 && angleNumber < 170) {
+        setTM("TM 2");
+      } else if (angleNumber >= 120 && angleNumber < 150) {
+        setTM("TM 5");
+      } else if (angleNumber >= 60 && angleNumber < 120) {
+        setTM("TM 6");
+      } else {
+        setTM(null);
+      }
     }
   }, [main, pointA, pointB]);
 
@@ -141,7 +155,7 @@ export default function AngleMapScreen() {
   const calculateAngle = () => {
     if (main && pointA && pointB) {
       const result = getAngleBetweenPoints(main, pointA, pointB);
-      setAngle(result as String);
+      setAngle(result);
     } else {
       ToastAndroid.show("Tentukan 3 titik", ToastAndroid.SHORT);
     }
@@ -288,25 +302,32 @@ export default function AngleMapScreen() {
 
       <View className="absolute bottom-5 left-3 right-3 gap-2">
         <View>
-          <Text className="font-artegra text-2xl">Sudut: {angle}°</Text>
+          {angle && (
+            <Text className="font-artegra text-2xl">Sudut: {angle}°</Text>
+          )}
+          {tm && (
+            <Text className="font-artegra text-lg text-blue-500">
+              Kategori: {tm}
+            </Text>
+          )}
         </View>
         <Pressable
           onPress={() => takePoint(setMain)}
           className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
-          <Text className="font-artegra self-center">Tentukan Point 1</Text>
+          <Text className="font-artegra self-center">Tiang Utama</Text>
         </Pressable>
         <Pressable
           onPress={() => takePoint(setPointA)}
           className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
-          <Text className="font-artegra self-center">Tentukan Point 2</Text>
+          <Text className="font-artegra self-center">Titik Sebelum</Text>
         </Pressable>
         <Pressable
           onPress={() => takePoint(setPointB)}
           className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
-          <Text className="font-artegra self-center">Tentukan Point 3</Text>
+          <Text className="font-artegra self-center">Titik Sesudah</Text>
         </Pressable>
         <Pressable
           onPress={resetPoint}
@@ -322,15 +343,17 @@ export default function AngleMapScreen() {
             Simpan Map Ke Gallery
           </Text>
         </Pressable>
-        <Pressable
-          disabled={isHistoryLoading}
-          onPress={generateNewHistory}
-          className="bg-gray-50 p-1 rounded-xl border border-gray-200"
-        >
-          <Text className="font-artegra self-center">
-            {isHistoryLoading ? "Loading..." : "Simpan Data"}
-          </Text>
-        </Pressable>
+        {user.role === "supervisor" && (
+          <Pressable
+            disabled={isHistoryLoading}
+            onPress={generateNewHistory}
+            className="bg-gray-50 p-1 rounded-xl border border-gray-200"
+          >
+            <Text className="font-artegra self-center">
+              {isHistoryLoading ? "Loading..." : "Simpan Data"}
+            </Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );
