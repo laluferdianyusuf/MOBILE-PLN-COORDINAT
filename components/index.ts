@@ -8,3 +8,4 @@ export * from "./OnBoardingItem";
 export * from "./Paginator";
 export * from "./NextButton";
 export * from "./PrevButton";
+export * from "./EmptyItem";

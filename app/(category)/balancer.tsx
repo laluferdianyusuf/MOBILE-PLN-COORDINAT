@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { BackButton } from "@/components/BackButton";
@@ -13,22 +13,23 @@ const balancer = () => {
   const [ir, setIr] = useState("");
   const [is, setIs] = useState("");
   const [it, setIt] = useState("");
-  const [wbp, setWbp] = useState<number | null>(null);
   const [lwbp, setLwbp] = useState<number | null>(null);
+  const [wbp, setWbp] = useState<number | null>(null);
+  const [type, setType] = useState<string>("");
 
   useEffect(() => {
     validateUser();
   }, []);
 
-  const hitungWBP = () => {
+  const calculate = () => {
     const IR = parseFloat(ir) || 0;
     const IS = parseFloat(is) || 0;
     const IT = parseFloat(it) || 0;
     if (IR && IS && IT) {
-      const WBP = (IR * IS * IT) / 3;
-      const LWBP = WBP * 0.667;
-      setWbp(WBP);
+      const LWBP = (IR + IS + IT) / 3;
+      const WBP = LWBP * 1.667;
       setLwbp(LWBP);
+      setWbp(WBP);
     }
   };
 
@@ -36,13 +37,14 @@ const balancer = () => {
     category: "balancer",
     title: "Menentukan Penyeimbang Beban Gardu",
     description: `Hasil mengitung Penyeimbang Beban Gardu`,
+    type: type,
     value: {
       ir: ir,
       is: is,
       it: it,
-      wbp: wbp,
       lwbp: lwbp,
-      selisih: `${(wbp! - lwbp!).toFixed(2)} A`,
+      wbp: wbp,
+      selisih: `${(lwbp! - wbp!).toFixed(2)} A`,
     },
     background: "bg-custom-error-1",
   };
@@ -76,10 +78,10 @@ const balancer = () => {
               </Text>
 
               <Text className="text-base text-gray-700 font-artegra">
-                Rumus WBP = (IR × IS × IT) / 3
+                Rumus LWBP = (IR + IS + IT) / 3
               </Text>
               <Text className="text-base text-gray-700 font-artegra">
-                Rumus LWBP = WBP × 66,7%
+                Rumus WBP = LWBP × 166,7%
               </Text>
               <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
                 IR, IS, IT adalah hasil pengukuran arus pada masing-masing fasa
@@ -106,6 +108,13 @@ const balancer = () => {
               placeholder="Contoh: 11"
               keyboard="numeric"
             />
+            <CustomInput
+              title="Masukkan Jenis Gardu (optional)"
+              value={type}
+              onChange={(text) => setType(text)}
+              placeholder="Contoh: Gardu tiang besi"
+              keyboard="default"
+            />
             {wbp !== null && lwbp !== null && (
               <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
                 <Text className="text-gray-800 text-lg mb-2 font-artegra-bold">
@@ -113,31 +122,52 @@ const balancer = () => {
                 </Text>
 
                 <Text className="text-gray-700 text-base font-artegra">
-                  WBP = {wbp.toFixed(2)} A
+                  • IR = {ir} A {"\n"}• IS = {is} A {"\n"}• IT = {it} A {"\n"}
                 </Text>
 
                 <Text className="text-gray-700 text-base font-artegra">
-                  LWBP = {lwbp.toFixed(2)} A
+                  • LWBP = {lwbp.toFixed(2)} A {"\n"}• WBP = {wbp.toFixed(2)} A{" "}
+                  {"\n"}• Selisih = {(lwbp - wbp).toFixed(2)} A
                 </Text>
 
-                <Text className="text-gray-700 text-base font-artegra">
-                  Selisih = {(wbp - lwbp).toFixed(2)} A
+                <Text className="text-sm text-gray-500 mt-2 font-artegra-italic">
+                  Penjelasan Hasil:
+                </Text>
+                <Text className="text-sm text-gray-600 font-artegra">
+                  • IR, IS, dan IT adalah nilai arus yang diukur pada
+                  masing-masing fasa gardu yang Anda masukkan. {"\n"}• Langkah
+                  pertama adalah menghitung **LWBP (Load Without Balance
+                  Penalty)**. LWBP dihitung sebagai rata-rata dari nilai IR, IS,
+                  dan IT: {"\n"}
+                  LWBP = (IR + IS + IT) / 3. {"\n"}• Langkah kedua adalah
+                  menghitung **WBP (With Balance Penalty)**. WBP adalah hasil
+                  dari LWBP yang dikalikan dengan faktor 1.667 (yaitu 166,7%):{" "}
+                  {"\n"}
+                  WBP = LWBP × 1.667. {"\n"}• Selisih antara LWBP dan WBP
+                  menunjukkan seberapa besar ketidakseimbangan beban. Semakin
+                  kecil selisih, semakin seimbang arus antar fasa. {"\n"}• Jika
+                  terjadi perbedaan yang besar antara IR, IS, dan IT, ini
+                  menunjukkan bahwa beban pada masing-masing fasa tidak
+                  seimbang. Anda disarankan untuk menyeimbangkan beban antar
+                  fasa agar distribusi arus menjadi lebih merata dan efisien.
                 </Text>
               </View>
             )}
           </View>
           <View className="flex flex-row gap-3">
             <CustomButton
-              onPress={hitungWBP}
+              onPress={calculate}
               text="Hitung"
               className="flex-1"
             />
-            <CustomButton
-              isDisable={isHistoryLoading}
-              onPress={generateNewHistory}
-              text={`${isHistoryLoading ? "Loading..." : "Simpan"}`}
-              className="flex-1"
-            />
+            {user.role === "supervisor" && (
+              <CustomButton
+                isDisable={isHistoryLoading}
+                onPress={generateNewHistory}
+                text={`${isHistoryLoading ? "Loading..." : "Simpan"}`}
+                className="flex-1"
+              />
+            )}
           </View>
         </ScrollView>
       </View>

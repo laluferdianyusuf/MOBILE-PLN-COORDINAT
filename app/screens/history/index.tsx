@@ -13,6 +13,7 @@ import {
   Calendar,
   CalendarCheck,
   CalendarMinus,
+  FileXls,
   MagnifyingGlass,
   Trash,
 } from "phosphor-react-native";
@@ -28,6 +29,7 @@ import {
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
 import CustomModal from "@/components/CustomModal";
+import EmptyItem from "@/components/EmptyItem";
 
 moment.locale("id");
 
@@ -114,9 +116,22 @@ export default function HistoryList() {
           >
             {item.title}
           </Text>
-          <Text className="text-xs text-gray-500 font-artegra">
-            {moment(item.createdAt).format("hh:mm A")}
-          </Text>
+          <View className="flex-row items-center gap-2">
+            <Text className="text-xs text-gray-500 font-artegra">
+              {moment(item.createdAt).format("hh:mm A")}
+            </Text>
+            {item.type && (
+              <>
+                <View className="w-[1px] h-1/2 bg-gray-500" />
+                <Text
+                  className="text-xs text-gray-500 font-artegra"
+                  ellipsizeMode="tail"
+                >
+                  {item.type}
+                </Text>
+              </>
+            )}
+          </View>
         </View>
       </View>
       <View className={`px-3 py-1 rounded-full ${item.background}`}>
@@ -172,92 +187,117 @@ export default function HistoryList() {
                 <BackButton onBack={() => router.back()} />
                 <Text className="font-artegra text-xl">Riwayat</Text>
               </View>
-              <View className="flex-row items-center border border-gray-300 rounded-2xl px-4 py-2 mb-4">
-                <TextInput
-                  className="ml-2 flex-1 text-sm text-gray-300"
-                  placeholder="Cari kategori..."
-                  placeholderTextColor={"#d1d5db"}
-                  value={query}
-                  onChangeText={setQuery}
-                />
-                <MagnifyingGlass size={20} color="#d1d5db" />
-              </View>
-
-              <View className=" pb-3 flex-row justify-between">
-                <View className="items-center flex-row-reverse gap-3">
-                  <Pressable
-                    disabled={selectedItems.length < 1}
-                    onPress={handlePresentModalPress}
-                    className={`rounded-full border flex-row gap-1 items-center justify-center border-custom-error-1 px-2 ${
-                      selectedItems.length > 0
-                        ? "bg-custom-error-2 opacity-100"
-                        : "bg-white opacity-50"
-                    }`}
-                  >
-                    <Trash
-                      size={10}
-                      color={`${
-                        selectedItems.length > 0 ? "white" : "#de5757"
-                      }`}
+              {filteredData.length > 0 ? (
+                <>
+                  <View className="flex-row items-center border border-gray-300 rounded-2xl px-4 py-2 mb-4">
+                    <TextInput
+                      className="ml-2 flex-1 text-sm text-gray-300"
+                      placeholder="Cari kategori..."
+                      placeholderTextColor={"#d1d5db"}
+                      value={query}
+                      onChangeText={setQuery}
                     />
-                    <Text
-                      className={`font-artegra text-xs capitalize ${
-                        selectedItems.length > 0
-                          ? "text-white"
-                          : "text-custom-error-2"
-                      }`}
-                    >
-                      hapus
-                    </Text>
-                  </Pressable>
-                </View>
-                <View className="items-center self-end flex-row-reverse gap-3">
-                  <Pressable
-                    onPress={toggleSelectAll}
-                    className={`w-5 h-5 rounded-full border border-gray-300 ${
-                      selectedItems.length === filteredData.length
-                        ? "bg-blue-300"
-                        : "bg-white"
-                    }`}
-                  />
-                  <Text className="font-artegra text-xs text-gray-400">
-                    Semua
-                  </Text>
-                </View>
-              </View>
+                    <MagnifyingGlass size={20} color="#d1d5db" />
+                  </View>
 
-              <ScrollView showsVerticalScrollIndicator={false}>
-                {Object.entries(groupedHistory).map(([label, items]) => (
-                  <View key={label} className="mb-4">
-                    <View className="flex-row gap-3 mb-3 items-center">
-                      {label === "Hari Ini" ? (
-                        <CalendarCheck
-                          size={15}
-                          weight="light"
-                          color="#6b7280"
+                  <View className=" pb-3 flex-row justify-between">
+                    <View className="items-center flex-row gap-3">
+                      <Pressable
+                        disabled={selectedItems.length < 1}
+                        onPress={handlePresentModalPress}
+                        className={`rounded-full border flex-row gap-1 items-center justify-center border-custom-error-1 px-2 ${
+                          selectedItems.length > 0
+                            ? "bg-custom-error-2 opacity-100"
+                            : "bg-custom-error-1 opacity-50"
+                        }`}
+                      >
+                        <Trash
+                          size={10}
+                          color={`${
+                            selectedItems.length > 0 ? "white" : "#de5757"
+                          }`}
                         />
-                      ) : label === "Kemarin" ? (
-                        <CalendarMinus
-                          size={15}
-                          weight="light"
-                          color="#6b7280"
-                        />
-                      ) : (
-                        <Calendar size={15} weight="light" color="#6b7280" />
-                      )}
-                      <Text className="text-gray-500 text-xs font-artegra">
-                        {label}
+                        <Text
+                          className={`font-artegra text-xs capitalize ${
+                            selectedItems.length > 0
+                              ? "text-white"
+                              : "text-custom-error-2"
+                          }`}
+                        >
+                          hapus
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        disabled={selectedItems.length < 1}
+                        onPress={handlePresentModalPress}
+                        className={`rounded-full border flex-row gap-1 items-center justify-center bg-custom-success-1 border-custom-success-2 px-2`}
+                      >
+                        <FileXls size={10} color={`#47a855`} />
+                        <Text
+                          className={`font-artegra text-xs capitalize text-custom-success-2`}
+                        >
+                          excel
+                        </Text>
+                      </Pressable>
+                    </View>
+                    <View className="items-center self-end flex-row-reverse gap-3">
+                      <Pressable
+                        onPress={toggleSelectAll}
+                        className={`w-5 h-5 rounded-full border border-gray-300 ${
+                          selectedItems.length === filteredData.length
+                            ? "bg-blue-300"
+                            : "bg-white"
+                        }`}
+                      />
+                      <Text className="font-artegra text-xs text-gray-400">
+                        Semua
                       </Text>
                     </View>
-                    <FlatList
-                      data={items}
-                      renderItem={renderItem}
-                      keyExtractor={(item) => String(item.id)}
-                      scrollEnabled={false}
-                    />
                   </View>
-                ))}
-              </ScrollView>
+
+                  <ScrollView showsVerticalScrollIndicator={false}>
+                    {Object.entries(groupedHistory).map(([label, items]) => (
+                      <View key={label} className="mb-4">
+                        <View className="flex-row gap-3 mb-3 items-center">
+                          {label === "Hari Ini" ? (
+                            <CalendarCheck
+                              size={15}
+                              weight="light"
+                              color="#6b7280"
+                            />
+                          ) : label === "Kemarin" ? (
+                            <CalendarMinus
+                              size={15}
+                              weight="light"
+                              color="#6b7280"
+                            />
+                          ) : (
+                            <Calendar
+                              size={15}
+                              weight="light"
+                              color="#6b7280"
+                            />
+                          )}
+                          <Text className="text-gray-500 text-xs font-artegra">
+                            {label}
+                          </Text>
+                        </View>
+                        <FlatList
+                          data={items}
+                          renderItem={renderItem}
+                          keyExtractor={(item) => String(item.id)}
+                          scrollEnabled={false}
+                        />
+                      </View>
+                    ))}
+                  </ScrollView>
+                </>
+              ) : (
+                <EmptyItem
+                  text="Tidak ada riwayat"
+                  desc="Silahkan buat pengukuran sudut dan perhitungan terlebih dahulu"
+                />
+              )}
             </View>
 
             <CustomModal

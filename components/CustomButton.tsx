@@ -6,6 +6,7 @@ interface CustomButtonProps {
   onPress: () => void;
   className?: string;
   isDisable?: boolean;
+  textClass?: string;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -13,6 +14,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   onPress,
   className,
   isDisable,
+  textClass,
 }) => {
   return (
     <Pressable
@@ -20,7 +22,9 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       onPress={onPress}
       className={`${className} p-2 px-4 bg-blue-400 rounded-xl`}
     >
-      <Text className="font-artegra text-center text-white">{text}</Text>
+      <Text className={`font-artegra text-center text-white ${textClass}`}>
+        {text}
+      </Text>
     </Pressable>
   );
 };

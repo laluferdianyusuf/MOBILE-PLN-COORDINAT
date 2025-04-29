@@ -12,6 +12,7 @@ const link = () => {
   const { user, validateUser } = useUserData({});
   const [power, setPower] = useState<string>("");
   const [voltage, setVoltage] = useState<string>("");
+  const [type, setType] = useState<string>("");
   const [result, setResult] = useState<number | null>(null);
 
   useEffect(() => {
@@ -29,6 +30,7 @@ const link = () => {
     category: "fuse_link",
     title: "Menghitung Fuse Link Gardu",
     description: `Hasil perhitungan Fuse Link Gardu`,
+    type: type,
     value: {
       power: power,
       voltage: voltage,
@@ -86,6 +88,14 @@ const link = () => {
               onChange={(text) => setVoltage(text)}
               keyboard="numeric"
             />
+            <CustomInput
+              value={type}
+              style=""
+              placeholder="Contoh : Gardu tiang besi"
+              title="Tipe gardu (optional)"
+              onChange={(text) => setType(text)}
+              keyboard="default"
+            />
             {result !== null && (
               <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
                 <Text className="text-xl font-artegra-bold text-gray-800 mb-2">
@@ -93,6 +103,14 @@ const link = () => {
                 </Text>
                 <Text className="text-gray-800 font-artegra-bold text-lg mb-2">
                   {result.toFixed(2)} A
+                </Text>
+                <Text className="text-sm text-gray-700">
+                  Perhitungan: I = P / (√3 × V) = {power} / (√3 × {voltage}) ={" "}
+                  {(
+                    parseFloat(power) /
+                    (Math.sqrt(3) * parseFloat(voltage) || 1)
+                  ).toFixed(2)}{" "}
+                  A
                 </Text>
                 <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
                   Ini adalah arus fuse link berdasarkan daya & tegangan yang

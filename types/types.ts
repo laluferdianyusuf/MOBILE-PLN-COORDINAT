@@ -15,7 +15,9 @@ export interface Category {
     | "/(category)/branch"
     | "/(category)/substation"
     | "/(category)/mcb"
-    | "/(category)/balancer";
+    | "/(category)/balancer"
+    | "/screens/mcb/first"
+    | "/screens/mcb/third";
 }
 
 export interface Home {
@@ -51,6 +53,7 @@ export interface User {
   email?: string;
   address?: string;
   password?: string;
+  role?: string;
 }
 
 export interface UserState {
@@ -85,6 +88,7 @@ export interface History {
     | "balancer";
   title?: string;
   description?: string;
+  type?: string;
   value?: Record<string, any>;
   background?: string;
   createdAt?: string;

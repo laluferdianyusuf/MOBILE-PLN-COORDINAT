@@ -10,26 +10,33 @@ import { useHistoryData } from "@/hooks/useHistoryHooks";
 
 const FuseLinkPercabangan = () => {
   const { user, validateUser } = useUserData({});
-  const [trafo1, setTrafo1] = useState("");
-  const [trafo2, setTrafo2] = useState("");
-  const [trafo3, setTrafo3] = useState("");
-  const [trafo4, setTrafo4] = useState("");
+  const [trafoValues, setTrafoValues] = useState<string[]>([""]);
   const [voltage, setVoltage] = useState("");
+  const [type, setType] = useState("");
   const [result, setResult] = useState<number | null>(null);
 
   useEffect(() => {
     validateUser();
   }, []);
 
-  const handleCalculate = () => {
-    const t1 = parseFloat(trafo1) || 0;
-    const t2 = parseFloat(trafo2) || 0;
-    const t3 = parseFloat(trafo3) || 0;
-    const t4 = parseFloat(trafo4) || 0;
-    const v = parseFloat(voltage);
+  const handleAddTrafo = () => {
+    setTrafoValues([...trafoValues, ""]);
+  };
 
-    if (v && (t1 || t2 || t3 || t4)) {
-      const totalPower = t1 + t2 + t3 + t4;
+  const handleTrafoChange = (text: string, index: number) => {
+    const newValue = [...trafoValues];
+    newValue[index] = text;
+    setTrafoValues(newValue);
+  };
+
+  const handleCalculate = () => {
+    const v = parseFloat(voltage);
+    const totalPower = trafoValues.reduce((sum, val) => {
+      const num = parseFloat(val);
+      return sum + (isNaN(num) ? 0 : num);
+    }, 0);
+
+    if (v && totalPower > 0) {
       const fuse = totalPower / (v * 1.73);
       setResult(fuse);
     }
@@ -39,11 +46,9 @@ const FuseLinkPercabangan = () => {
     category: "fuse_link_branch",
     title: "Menentukan Fuse Link Percabangan",
     description: `Hasil mengitung Fuse Link Percabangan`,
+    type: type,
     value: {
-      trafo_1: trafo1,
-      trafo_2: trafo2,
-      trafo_3: trafo3,
-      trafo_4: trafo4,
+      trafo: trafoValues,
       voltage: voltage,
       result: result,
     },
@@ -64,7 +69,12 @@ const FuseLinkPercabangan = () => {
           <Text className="font-artegra-bold text-xl">
             Fuse Link Percabangan
           </Text>
-          <View className="opacity-0" />
+          <CustomButton
+            onPress={handleAddTrafo}
+            text="+"
+            className="px-2 p-0 bg-transparent"
+            textClass="text-black text-2xl"
+          />
         </View>
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
@@ -92,34 +102,17 @@ const FuseLinkPercabangan = () => {
               </Text>
             </View>
 
-            <CustomInput
-              title="Kapasitas Trafo 1 (VA)"
-              value={trafo1}
-              onChange={(text) => setTrafo1(text)}
-              placeholder="Contoh: 50000"
-              keyboard="numeric"
-            />
-            <CustomInput
-              title="Kapasitas Trafo 2 (VA)"
-              value={trafo2}
-              onChange={(text) => setTrafo2(text)}
-              placeholder="Contoh: 100000"
-              keyboard="numeric"
-            />
-            <CustomInput
-              title="Kapasitas Trafo 3 (VA)"
-              value={trafo3}
-              onChange={(text) => setTrafo3(text)}
-              placeholder="Contoh: 160000"
-              keyboard="numeric"
-            />
-            <CustomInput
-              title="Kapasitas Trafo 4 (VA)"
-              value={trafo4}
-              onChange={(text) => setTrafo4(text)}
-              placeholder="Contoh: 200000"
-              keyboard="numeric"
-            />
+            {trafoValues.map((val, idx) => (
+              <CustomInput
+                key={idx}
+                title={`Kapasitas Trafo ${idx + 1} (VA)`}
+                value={val}
+                onChange={(text) => handleTrafoChange(text, idx)}
+                placeholder="Contoh: 50000"
+                keyboard="numeric"
+              />
+            ))}
+
             <CustomInput
               title="Tegangan TM (Volt)"
               value={voltage}
@@ -127,17 +120,52 @@ const FuseLinkPercabangan = () => {
               placeholder="Contoh: 20000"
               keyboard="numeric"
             />
+            <CustomInput
+              title="Jenis Trafo (optional)"
+              value={type}
+              onChange={(text) => setType(text)}
+              placeholder="Contoh: Trafo isolasi"
+              keyboard="default"
+            />
             {result !== null && (
-              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
-                <Text className="text-gray-800 text-lg mb-2 font-artegra-bold">
+              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-3">
+                <Text className="text-gray-800 text-lg font-artegra-bold">
                   Hasil Fuse Link Percabangan:
                 </Text>
                 <Text className="text-gray-700 text-base font-artegra">
                   {result.toFixed(2)} A {"\n"}≈ {Math.round(result)} A
                 </Text>
-                <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
-                  Ini adalah arus fuse link percabangan berdasarkan nilai Trafo
-                  1 - 4 & tegangan yang Anda masukkan.
+                <View className="mt-2 space-y-1">
+                  <Text className="text-sm text-gray-700 font-artegra-bold">
+                    Penjelasan Perhitungan:
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    1. Total Daya Trafo ={" "}
+                    {trafoValues
+                      .map((v) => parseFloat(v) || 0)
+                      .reduce((a, b) => a + b, 0)}{" "}
+                    VA
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    2. Tegangan TM = {voltage} V
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    3. Rumus: I = Total Daya / (√3 × Tegangan)
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    4. I ={" "}
+                    {trafoValues
+                      .map((v) => parseFloat(v) || 0)
+                      .reduce((a, b) => a + b, 0)}{" "}
+                    / ({voltage} × 1.73)
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    5. I ≈ {result.toFixed(2)} A
+                  </Text>
+                </View>
+                <Text className="text-xs text-gray-500 font-artegra-italic mt-2">
+                  Hasil di atas menunjukkan arus fuse link yang dibutuhkan
+                  berdasarkan total daya trafo dan tegangan yang dimasukkan.
                 </Text>
               </View>
             )}

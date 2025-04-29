@@ -87,17 +87,48 @@ const first = () => {
             />
 
             {result1 !== null && (
-              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
+              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-3">
                 <Text className="font-artegra-bold text-gray-800 text-lg mb-2">
                   Hasil MCB 1 Phase:
                 </Text>
+
                 <Text className="text-gray-700 text-base font-artegra">
-                  Arus = {result1.toFixed(2)} A {"\n"}
-                  Saran MCB = {Math.ceil(result1)} A
+                  Arus = Daya / Tegangan = {power1} / {voltage1} ={" "}
+                  <Text className="font-artegra-bold">
+                    {result1.toFixed(2)} A
+                  </Text>
                 </Text>
-                <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
-                  Ini adalah hasil perhitungan MCB 1 Phase berdasarkan daya &
-                  tegangan yang Anda masukkan.
+
+                <Text className="text-gray-700 text-sm font-artegra">
+                  Saran MCB = Pembulatan ke atas dari arus ={" "}
+                  <Text className="font-artegra-bold">
+                    {Math.ceil(result1)} A
+                  </Text>
+                </Text>
+
+                <View className="mt-2">
+                  <Text className="text-sm text-gray-700 font-artegra-bold">
+                    Penjelasan Perhitungan:
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    - Daya listrik yang digunakan: {power1} Watt
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    - Tegangan sistem: {voltage1} Volt
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    - Maka, Arus = P / V = {power1} / {voltage1} ={" "}
+                    {result1.toFixed(2)} A
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    - Untuk keamanan, MCB dipilih dengan nilai lebih besar atau
+                    sama dengan arus.
+                  </Text>
+                </View>
+
+                <Text className="text-xs text-gray-500 font-artegra-italic mt-1">
+                  Perhitungan ini penting agar MCB mampu memutus arus saat
+                  terjadi kelebihan beban.
                 </Text>
               </View>
             )}

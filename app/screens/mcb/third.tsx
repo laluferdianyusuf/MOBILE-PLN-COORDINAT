@@ -86,17 +86,54 @@ const third = () => {
               keyboard="numeric"
             />
             {result3 !== null && (
-              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
+              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-3">
                 <Text className="text-gray-800 text-lg mb-2 font-artegra-bold">
                   Hasil MCB 3 Phase:
                 </Text>
+
                 <Text className="text-gray-700 text-base font-artegra">
-                  Arus = {result3.toFixed(2)} A {"\n"}
-                  Saran MCB = {Math.ceil(result3)} A
+                  Arus = Daya / (√3 × Tegangan) = {power3} / (√3 × {voltage3}) ={" "}
+                  <Text className="font-artegra-bold">
+                    {result3.toFixed(2)} A
+                  </Text>
                 </Text>
-                <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
-                  Ini adalah hasil perhitungan MCB 3 Phase berdasarkan daya &
-                  tegangan yang Anda masukkan.
+
+                <Text className="text-gray-700 text-base font-artegra">
+                  Saran MCB = Pembulatan ke atas dari arus ={" "}
+                  <Text className="font-artegra-bold">
+                    {Math.ceil(result3)} A
+                  </Text>
+                </Text>
+
+                <View className="mt-2">
+                  <Text className="text-sm text-gray-700 font-artegra-bold">
+                    Penjelasan:
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    - Daya listrik yang digunakan: {power3} Watt
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    - Tegangan sistem 3 Phase: {voltage3} Volt
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    - Rumus: I = P / (√3 × V)
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    - √3 (akar 3) ≈ 1.732
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    - Maka: I = {power3} / (1.732 × {voltage3}) ={" "}
+                    {result3.toFixed(2)} A
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    - MCB disarankan ≥ arus, maka pembulatan ke atas ={" "}
+                    {Math.ceil(result3)} A
+                  </Text>
+                </View>
+
+                <Text className="text-xs text-gray-500 font-artegra-italic mt-1">
+                  Perhitungan ini memastikan MCB yang digunakan cukup kuat untuk
+                  melindungi beban 3 phase dari kelebihan arus.
                 </Text>
               </View>
             )}

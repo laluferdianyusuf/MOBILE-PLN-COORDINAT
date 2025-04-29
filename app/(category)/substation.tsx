@@ -13,7 +13,8 @@ const substation = () => {
   const [power, setPower] = useState("");
   const [voltage, setVoltage] = useState("");
   const [line, setLine] = useState(""); // jurusan
-  const [nhFuse, setNhFuse] = useState<number | null>(null);
+  const [type, setType] = useState("");
+  const [result, setResult] = useState<number | null>(null);
 
   useEffect(() => {
     validateUser();
@@ -25,7 +26,7 @@ const substation = () => {
     const n = parseInt(line) || 0;
 
     if (!P || !V || !n || n === 0) {
-      setNhFuse(null);
+      setResult(null);
       return;
     }
 
@@ -33,18 +34,19 @@ const substation = () => {
     const arusJurusan = In / n;
     const fuse = arusJurusan * 0.9;
 
-    setNhFuse(fuse);
+    setResult(fuse);
   };
 
   const payload = {
     category: "nh_fuse_substation",
     title: "Menentukan NH Fuse Gardu",
     description: `Hasil mengitung NH Fuse Gardu`,
+    type: type,
     value: {
       power: power,
       voltage: voltage,
       jurusan: line,
-      result: nhFuse,
+      result: result,
     },
     background: "bg-custom-light-yellow-1",
   };
@@ -127,40 +129,68 @@ const substation = () => {
               placeholder="Contoh: 4"
               keyboard="numeric"
             />
+            <CustomInput
+              title="Masukkan Jenis Gardu (optional)"
+              value={type}
+              onChange={(text) => setType(text)}
+              placeholder="Contoh: Gardu tiang besi"
+              keyboard="default"
+            />
 
-            {nhFuse !== null && (
-              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
+            {result !== null && (
+              <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-3">
                 <Text className="text-gray-800 text-lg mb-2 font-artegra-bold">
                   Hasil Perhitungan:
                 </Text>
 
                 <Text className="text-gray-700 text-base font-artegra">
-                  In = P / (V × √3) ={" "}
+                  NH Fuse = Arus Tiap Jurusan × 0.9 ={" "}
                   <Text className="font-artegra-bold">
+                    {result.toFixed(2)} A
+                  </Text>
+                </Text>
+
+                <View className="mt-3 space-y-1">
+                  <Text className="text-sm text-gray-700 font-artegra-bold">
+                    Penjelasan Perhitungan:
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    1. Daya Trafo (P) = {power} VA
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    2. Tegangan TR (V) = {voltage} V
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    3. Jumlah Jurusan = {line}
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    4. Hitung Arus Total (In):
+                  </Text>
+                  <Text className="text-sm text-gray-600 font-artegra ml-3">
+                    In = P / (V × √3) = {parseFloat(power)} / (
+                    {parseFloat(voltage)} × 1.73) ={" "}
                     {(
                       parseFloat(power) /
                       (parseFloat(voltage) * Math.sqrt(3))
                     ).toFixed(2)}{" "}
                     A
                   </Text>
-                </Text>
-
-                <Text className="text-gray-700 text-base font-artegra">
-                  Arus Tiap Jurusan = In / Jumlah Jurusan ={" "}
-                  <Text className="font-artegra-bold">
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    5. Arus per Jurusan = In / {line} ={" "}
                     {(
                       parseFloat(power) /
                       (parseFloat(voltage) * Math.sqrt(3) * parseInt(line))
                     ).toFixed(2)}{" "}
                     A
                   </Text>
-                </Text>
-
-                <Text className="text-gray-700 text-base font-artegra">
-                  NH Fuse = Arus Tiap Jurusan × 0.9 ={" "}
-                  <Text className="font-artegra-bold">
-                    {nhFuse.toFixed(2)} A
+                  <Text className="text-sm text-gray-600 font-artegra">
+                    6. NH Fuse = Arus per Jurusan × 0.9 = {result.toFixed(2)} A
                   </Text>
+                </View>
+
+                <Text className="text-xs text-gray-500 font-artegra-italic mt-2">
+                  NH Fuse ini mewakili 90% dari beban arus tiap jurusan gardu,
+                  yang dihitung dari daya total dan jumlah jurusan.
                 </Text>
               </View>
             )}

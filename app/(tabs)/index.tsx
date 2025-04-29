@@ -7,7 +7,12 @@ import {
   View,
 } from "react-native";
 import React, { useCallback, useEffect, useRef } from "react";
-import { ClockClockwise, Plugs, PlugsConnected } from "phosphor-react-native";
+import {
+  ClockClockwise,
+  Plugs,
+  PlugsConnected,
+  Scroll,
+} from "phosphor-react-native";
 import { Category } from "@/types/types";
 import { ThemedView } from "@/components/ThemedView";
 import CategoryItem from "@/components/CategoryItem";
@@ -93,13 +98,20 @@ const index = () => {
           <BottomSheetModalProvider>
             <View className="pt-16 pb-6 px-6 flex-1 gap-7">
               <View className="flex-row justify-between item-center">
-                <Pressable
-                  className="p-2 rounded-full bg-gray-100"
-                  onPress={() => router.push("/screens/history")}
-                >
-                  <ClockClockwise size={32} color="black" />
-                </Pressable>
-
+                <View className="flex-row items-center gap-3">
+                  <Pressable
+                    className="p-2 rounded-full bg-gray-100"
+                    onPress={() => router.push("/screens/history")}
+                  >
+                    <ClockClockwise size={32} color="#4b5563" />
+                  </Pressable>
+                  <Pressable
+                    className="p-2 rounded-full bg-gray-100"
+                    onPress={() => router.push("/screens/table")}
+                  >
+                    <Scroll size={32} color="#4b5563" />
+                  </Pressable>
+                </View>
                 <Pressable
                   className="p-2 rounded-full bg-custom-error-1"
                   onPress={handlePresentModalPress}
