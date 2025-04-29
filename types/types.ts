@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { ImageProps } from "react-native";
 
 // category
 export interface Category {
@@ -15,6 +16,21 @@ export interface Category {
     | "/(category)/substation"
     | "/(category)/mcb"
     | "/(category)/balancer";
+}
+
+export interface Home {
+  id: string;
+  title: string;
+  desc: string;
+  image: ImageProps;
+  uri: "/(auth)/login" | "/(tabs)";
+}
+
+export interface ItemProps {
+  id: string;
+  image: ImageProps;
+  title: string;
+  description: string;
 }
 
 export interface HistoryItem {

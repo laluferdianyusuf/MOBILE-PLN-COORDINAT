@@ -1,16 +1,13 @@
-import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import StartScreen from "./screens/StartScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import LoginScreen from "./screens/LoginScreen";
 import { LoadingWave } from "@/components";
 import OnBoarding from "@/components/OnBoarding";
+import HomeScreen from "./screens/HomeScreen";
 
 export default function App() {
   const [showStartScreen, setShowStartScreen] = useState<boolean>(false);
-  const [showRegisterScreen, setShowRegisterScreen] = useState<boolean>(false);
+  const [showHomeScreen, setHomeScreen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
@@ -47,15 +44,15 @@ export default function App() {
         onComplete={async () => {
           await AsyncStorage.setItem("hasSeenStartScreen", "true");
           setShowStartScreen(false);
-          setShowRegisterScreen(true);
+          setHomeScreen(true);
         }}
       />
     );
   }
 
-  if (showRegisterScreen) {
-    return <RegisterScreen />;
+  if (showHomeScreen) {
+    return <HomeScreen />;
   }
 
-  return <LoginScreen />;
+  return <HomeScreen />;
 }
