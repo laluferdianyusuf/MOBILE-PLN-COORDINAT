@@ -1,18 +1,6 @@
-import {
-  Text,
-  View,
-  Image,
-  useWindowDimensions,
-  ImageProps,
-} from "react-native";
+import { Text, View, Image, useWindowDimensions } from "react-native";
 import React from "react";
-
-interface ItemProps {
-  id: string;
-  image: ImageProps;
-  title: string;
-  description: string;
-}
+import { ItemProps } from "@/types/types";
 
 interface OnBoardingItemProps {
   item: ItemProps;

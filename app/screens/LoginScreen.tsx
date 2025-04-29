@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
-import { CustomInput } from "@/components";
+import { BackButton, CustomInput } from "@/components";
 import { ThemedView } from "@/components/ThemedView";
 import { login } from "@/redux/reducers";
 import { AppDispatch } from "@/redux/store";
@@ -111,6 +111,9 @@ const LoginScreen: React.FC = ({}) => {
   return (
     <ThemedView className={`flex-1`}>
       <View className="pt-16 pb-6 px-6 flex-1">
+        <View className="">
+          <BackButton onBack={() => router.back()} />
+        </View>
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
@@ -180,27 +183,6 @@ const LoginScreen: React.FC = ({}) => {
                 </Text>
               )}
             </Pressable>
-          </View>
-          <View className="gap-4">
-            <View className="flex-row items-center justify-center gap-3">
-              <View className="h-[2px] flex-1 bg-custom-grey-4" />
-              <Text className="font-artegra-bold capitalize text-custom-grey-4">
-                buat akun
-              </Text>
-              <View className="h-[2px] flex-1 bg-custom-grey-4" />
-            </View>
-            <View className="flex-row items-center gap-1 justify-center">
-              <Text className="font-artegra capitalize text-custom-grey-2">
-                belum mempunyai akun ?
-              </Text>
-              <Pressable
-                onPress={() => router.push({ pathname: "/(auth)/register" })}
-              >
-                <Text className="font-artegra-bold text-custom-light-blue-2">
-                  Daftar
-                </Text>
-              </Pressable>
-            </View>
           </View>
         </ScrollView>
       </View>

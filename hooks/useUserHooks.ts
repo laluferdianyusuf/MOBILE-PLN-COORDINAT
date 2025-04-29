@@ -35,16 +35,15 @@ export function useUserData({ id, closeModal }: UserDataProps) {
     setIsLoading(true);
     try {
       await dispatch(logout()).unwrap();
-      AsyncStorage.removeItem("hasSeenStartScreen");
-      ToastAndroid.show("Berhasil keluar aplikasi", ToastAndroid.SHORT);
+      ToastAndroid.show("Berhasil keluar", ToastAndroid.SHORT);
     } catch (error) {
-      ToastAndroid.show("Gagal keluar aplikasi", ToastAndroid.SHORT);
+      ToastAndroid.show("Gagal keluar", ToastAndroid.SHORT);
     } finally {
       setIsLoading(false);
       if (closeModal) {
         closeModal();
       }
-      router.replace("/(auth)/login");
+      router.replace("/(auth)/home");
     }
   };
 
