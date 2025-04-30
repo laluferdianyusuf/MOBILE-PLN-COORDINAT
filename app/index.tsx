@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { LoadingWave } from "@/components";
 import OnBoarding from "@/components/OnBoarding";
-import HomeScreen from "./screens/HomeScreen";
+import HomeScreen from "./screens/home";
 
 export default function App() {
   const [showStartScreen, setShowStartScreen] = useState<boolean>(false);

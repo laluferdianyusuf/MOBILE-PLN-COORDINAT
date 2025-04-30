@@ -43,7 +43,7 @@ export function useUserData({ id, closeModal }: UserDataProps) {
       if (closeModal) {
         closeModal();
       }
-      router.replace("/(auth)/home");
+      router.replace("/screens/home");
     }
   };
 

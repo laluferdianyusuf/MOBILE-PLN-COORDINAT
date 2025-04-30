@@ -30,6 +30,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import CustomModal from "@/components/CustomModal";
 import EmptyItem from "@/components/EmptyItem";
+import { generateAndShareExcel } from "@/utils/exportExcel";
 
 moment.locale("id");
 
@@ -39,6 +40,7 @@ export default function HistoryList() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [query, setQuery] = useState<string>("");
   const [filteredData, setFilteredData] = useState<History[]>([]);
+
   // ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -104,8 +106,10 @@ export default function HistoryList() {
       <View className="flex-row items-center gap-3 flex-1">
         <Pressable
           onPress={() => handleSelected(String(item.id))}
-          className={`w-5 h-5 rounded-full border border-gray-300 ${
-            selectedItems.includes(String(item.id)) ? "bg-blue-300" : "bg-white"
+          className={`w-5 h-5 rounded-full border  ${
+            selectedItems.includes(String(item.id))
+              ? "bg-custom-info-1 border-custom-info-2"
+              : "bg-white border-gray-300"
           } `}
         />
         <View>
@@ -177,142 +181,129 @@ export default function HistoryList() {
 
   return (
     <ThemedView className={`flex-1`}>
-      {isHistoryLoading ? (
-        <LoadingWave />
-      ) : (
-        <GestureHandlerRootView className="flex-1 justify-center">
-          <BottomSheetModalProvider>
-            <View className="pt-16 pb-6 px-6 flex-1">
-              <View className="flex-row items-center justify-between pb-4">
-                <BackButton onBack={() => router.back()} />
-                <Text className="font-artegra text-xl">Riwayat</Text>
+      <GestureHandlerRootView className="flex-1 justify-center">
+        <BottomSheetModalProvider>
+          <View className="pt-16 pb-6 px-6 flex-1">
+            <View className="flex-row items-center justify-between pb-4">
+              <BackButton onBack={() => router.back()} />
+              <Text className="font-artegra text-xl">Riwayat</Text>
+            </View>
+            <View className="flex-row items-center border border-gray-300 rounded-2xl px-4 py-2 mb-4">
+              <TextInput
+                className="ml-2 flex-1 text-sm text-gray-300"
+                placeholder="Cari kategori..."
+                placeholderTextColor={"#d1d5db"}
+                value={query}
+                onChangeText={setQuery}
+              />
+              <MagnifyingGlass size={20} color="#d1d5db" />
+            </View>
+            <View className=" pb-3 flex-row justify-between">
+              <View className="items-center flex-row gap-3">
+                <Pressable
+                  disabled={selectedItems.length < 1}
+                  onPress={handlePresentModalPress}
+                  className={`rounded-full border flex-row gap-1 items-center justify-center border-custom-error-1 px-2 ${
+                    selectedItems.length > 0
+                      ? "bg-custom-error-2 opacity-100"
+                      : "bg-custom-error-1 opacity-50"
+                  }`}
+                >
+                  <Trash
+                    size={10}
+                    color={`${selectedItems.length > 0 ? "white" : "#de5757"}`}
+                  />
+                  <Text
+                    className={`font-artegra text-xs capitalize ${
+                      selectedItems.length > 0
+                        ? "text-white"
+                        : "text-custom-error-2"
+                    }`}
+                  >
+                    hapus
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => generateAndShareExcel(filteredData)}
+                  className={`rounded-full border flex-row gap-1 items-center justify-center bg-custom-success-1 border-custom-success-2 px-2`}
+                >
+                  <FileXls size={10} color={`#47a855`} />
+                  <Text
+                    className={`font-artegra text-xs capitalize text-custom-success-2`}
+                  >
+                    excel
+                  </Text>
+                </Pressable>
               </View>
-              {filteredData.length > 0 ? (
-                <>
-                  <View className="flex-row items-center border border-gray-300 rounded-2xl px-4 py-2 mb-4">
-                    <TextInput
-                      className="ml-2 flex-1 text-sm text-gray-300"
-                      placeholder="Cari kategori..."
-                      placeholderTextColor={"#d1d5db"}
-                      value={query}
-                      onChangeText={setQuery}
-                    />
-                    <MagnifyingGlass size={20} color="#d1d5db" />
-                  </View>
-
-                  <View className=" pb-3 flex-row justify-between">
-                    <View className="items-center flex-row gap-3">
-                      <Pressable
-                        disabled={selectedItems.length < 1}
-                        onPress={handlePresentModalPress}
-                        className={`rounded-full border flex-row gap-1 items-center justify-center border-custom-error-1 px-2 ${
-                          selectedItems.length > 0
-                            ? "bg-custom-error-2 opacity-100"
-                            : "bg-custom-error-1 opacity-50"
-                        }`}
-                      >
-                        <Trash
-                          size={10}
-                          color={`${
-                            selectedItems.length > 0 ? "white" : "#de5757"
-                          }`}
+              <View className="items-center self-end flex-row-reverse gap-3">
+                <Pressable
+                  onPress={toggleSelectAll}
+                  className={`w-5 h-5 rounded-full border  ${
+                    selectedItems.length === filteredData.length
+                      ? "bg-custom-info-1 border-custom-info-2"
+                      : "bg-white border-gray-300"
+                  }`}
+                />
+                <Text className="font-artegra text-xs text-gray-400">
+                  Semua
+                </Text>
+              </View>
+            </View>
+            {isHistoryLoading ? (
+              <LoadingWave />
+            ) : filteredData.length > 0 ? (
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {Object.entries(groupedHistory).map(([label, items]) => (
+                  <View key={label} className="mb-4">
+                    <View className="flex-row gap-3 mb-3 items-center">
+                      {label === "Hari Ini" ? (
+                        <CalendarCheck
+                          size={15}
+                          weight="light"
+                          color="#6b7280"
                         />
-                        <Text
-                          className={`font-artegra text-xs capitalize ${
-                            selectedItems.length > 0
-                              ? "text-white"
-                              : "text-custom-error-2"
-                          }`}
-                        >
-                          hapus
-                        </Text>
-                      </Pressable>
-                      <Pressable
-                        disabled={selectedItems.length < 1}
-                        onPress={handlePresentModalPress}
-                        className={`rounded-full border flex-row gap-1 items-center justify-center bg-custom-success-1 border-custom-success-2 px-2`}
-                      >
-                        <FileXls size={10} color={`#47a855`} />
-                        <Text
-                          className={`font-artegra text-xs capitalize text-custom-success-2`}
-                        >
-                          excel
-                        </Text>
-                      </Pressable>
-                    </View>
-                    <View className="items-center self-end flex-row-reverse gap-3">
-                      <Pressable
-                        onPress={toggleSelectAll}
-                        className={`w-5 h-5 rounded-full border border-gray-300 ${
-                          selectedItems.length === filteredData.length
-                            ? "bg-blue-300"
-                            : "bg-white"
-                        }`}
-                      />
-                      <Text className="font-artegra text-xs text-gray-400">
-                        Semua
+                      ) : label === "Kemarin" ? (
+                        <CalendarMinus
+                          size={15}
+                          weight="light"
+                          color="#6b7280"
+                        />
+                      ) : (
+                        <Calendar size={15} weight="light" color="#6b7280" />
+                      )}
+                      <Text className="text-gray-500 text-xs font-artegra">
+                        {label}
                       </Text>
                     </View>
+                    <FlatList
+                      data={items}
+                      renderItem={renderItem}
+                      keyExtractor={(item) => String(item.id)}
+                      scrollEnabled={false}
+                    />
                   </View>
+                ))}
+              </ScrollView>
+            ) : (
+              <EmptyItem
+                text="Tidak ada riwayat"
+                desc="Silahkan buat pengukuran sudut dan perhitungan terlebih dahulu"
+              />
+            )}
+          </View>
 
-                  <ScrollView showsVerticalScrollIndicator={false}>
-                    {Object.entries(groupedHistory).map(([label, items]) => (
-                      <View key={label} className="mb-4">
-                        <View className="flex-row gap-3 mb-3 items-center">
-                          {label === "Hari Ini" ? (
-                            <CalendarCheck
-                              size={15}
-                              weight="light"
-                              color="#6b7280"
-                            />
-                          ) : label === "Kemarin" ? (
-                            <CalendarMinus
-                              size={15}
-                              weight="light"
-                              color="#6b7280"
-                            />
-                          ) : (
-                            <Calendar
-                              size={15}
-                              weight="light"
-                              color="#6b7280"
-                            />
-                          )}
-                          <Text className="text-gray-500 text-xs font-artegra">
-                            {label}
-                          </Text>
-                        </View>
-                        <FlatList
-                          data={items}
-                          renderItem={renderItem}
-                          keyExtractor={(item) => String(item.id)}
-                          scrollEnabled={false}
-                        />
-                      </View>
-                    ))}
-                  </ScrollView>
-                </>
-              ) : (
-                <EmptyItem
-                  text="Tidak ada riwayat"
-                  desc="Silahkan buat pengukuran sudut dan perhitungan terlebih dahulu"
-                />
-              )}
-            </View>
-
-            <CustomModal
-              onSubmit={deleteHistories}
-              onClose={handleCloseModalPress}
-              title="Yakin ingin menghapus data?"
-              description="Data yang kamu pilih akan dihapus secara permanen dan tidak bisa dikembalikan. Pastikan kamu sudah mengeceknya dengan benar."
-              submitText="Ya, Hapus Sekarang"
-              cancelText="Tidak, Batalkan"
-              ref={bottomSheetModalRef}
-              icon={<Trash size={50} color="#de5757" />}
-            />
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
-      )}
+          <CustomModal
+            onSubmit={deleteHistories}
+            onClose={handleCloseModalPress}
+            title="Yakin ingin menghapus data?"
+            description="Data yang kamu pilih akan dihapus secara permanen dan tidak bisa dikembalikan. Pastikan kamu sudah mengeceknya dengan benar."
+            submitText="Ya, Hapus Sekarang"
+            cancelText="Tidak, Batalkan"
+            ref={bottomSheetModalRef}
+            icon={<Trash size={50} color="#de5757" />}
+          />
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </ThemedView>
   );
 }

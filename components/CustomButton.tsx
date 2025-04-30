@@ -1,12 +1,13 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { ReactNode } from "react";
 
 interface CustomButtonProps {
-  text: string;
+  text?: string;
   onPress: () => void;
   className?: string;
   isDisable?: boolean;
   textClass?: string;
+  icon?: ReactNode;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -14,7 +15,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   onPress,
   className,
   isDisable,
-  textClass,
+  textClass = "text-white",
+  icon,
 }) => {
   return (
     <Pressable
@@ -22,13 +24,9 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       onPress={onPress}
       className={`${className} p-2 px-4 bg-blue-400 rounded-xl`}
     >
-      <Text className={`font-artegra text-center text-white ${textClass}`}>
-        {text}
-      </Text>
+      <Text className={`font-artegra text-center ${textClass}`}>{text}</Text>
     </Pressable>
   );
 };
 
 export default CustomButton;
-
-const styles = StyleSheet.create({});

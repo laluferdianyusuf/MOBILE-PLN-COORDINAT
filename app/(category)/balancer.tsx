@@ -138,18 +138,45 @@ const balancer = () => {
                   masing-masing fasa gardu yang Anda masukkan. {"\n"}• Langkah
                   pertama adalah menghitung **LWBP (Load Without Balance
                   Penalty)**. LWBP dihitung sebagai rata-rata dari nilai IR, IS,
-                  dan IT: {"\n"}
-                  LWBP = (IR + IS + IT) / 3. {"\n"}• Langkah kedua adalah
-                  menghitung **WBP (With Balance Penalty)**. WBP adalah hasil
-                  dari LWBP yang dikalikan dengan faktor 1.667 (yaitu 166,7%):{" "}
+                  dan IT. {"\n"}• Langkah kedua adalah menghitung **WBP (With
+                  Balance Penalty)**. WBP adalah hasil dari LWBP × 1.667. {"\n"}
+                  • Selisih antara LWBP dan WBP menunjukkan seberapa besar
+                  ketidakseimbangan beban. Semakin kecil selisih, semakin
+                  seimbang arus antar fasa. {"\n"}• Jika terjadi perbedaan besar
+                  antar fasa, beban perlu disesuaikan agar distribusi arus lebih
+                  merata.
+                </Text>
+
+                <Text className="text-sm text-gray-600 font-artegra mt-4">
+                  <Text className="font-artegra-bold">Contoh Penyesuaian:</Text>{" "}
                   {"\n"}
-                  WBP = LWBP × 1.667. {"\n"}• Selisih antara LWBP dan WBP
-                  menunjukkan seberapa besar ketidakseimbangan beban. Semakin
-                  kecil selisih, semakin seimbang arus antar fasa. {"\n"}• Jika
-                  terjadi perbedaan yang besar antara IR, IS, dan IT, ini
-                  menunjukkan bahwa beban pada masing-masing fasa tidak
-                  seimbang. Anda disarankan untuk menyeimbangkan beban antar
-                  fasa agar distribusi arus menjadi lebih merata dan efisien.
+                  Misalkan nilai input Anda adalah: {"\n"}- IR ={" "}
+                  {parseFloat(ir)} A {"\n"}- IS = {parseFloat(is)} A {"\n"}- IT
+                  = {parseFloat(it)} A {"\n"}
+                  Maka rata-rata arus (LWBP) adalah {lwbp.toFixed(2)} A. {"\n"}
+                  Agar fasa menjadi seimbang, sesuaikan arus fasa menjadi
+                  mendekati nilai tersebut: {"\n"}
+                  {parseFloat(ir) !== lwbp &&
+                    `• IR ${
+                      parseFloat(ir) > lwbp ? "turunkan" : "naikkan"
+                    } ${Math.abs(parseFloat(ir) - lwbp).toFixed(
+                      2
+                    )} A → ${lwbp.toFixed(2)} A\n`}
+                  {parseFloat(is) !== lwbp &&
+                    `• IS ${
+                      parseFloat(is) > lwbp ? "turunkan" : "naikkan"
+                    } ${Math.abs(parseFloat(is) - lwbp).toFixed(
+                      2
+                    )} A → ${lwbp.toFixed(2)} A\n`}
+                  {parseFloat(it) !== lwbp &&
+                    `• IT ${
+                      parseFloat(it) > lwbp ? "turunkan" : "naikkan"
+                    } ${Math.abs(parseFloat(it) - lwbp).toFixed(
+                      2
+                    )} A → ${lwbp.toFixed(2)} A\n`}
+                  Penyesuaian ini bertujuan agar seluruh fasa memiliki nilai
+                  arus yang mendekati rata-rata dan tercapai keseimbangan beban
+                  gardu.
                 </Text>
               </View>
             )}

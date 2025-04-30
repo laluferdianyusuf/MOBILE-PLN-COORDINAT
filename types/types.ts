@@ -16,8 +16,8 @@ export interface Category {
     | "/(category)/substation"
     | "/(category)/mcb"
     | "/(category)/balancer"
-    | "/screens/mcb/first"
-    | "/screens/mcb/third";
+    | "/(category)/mcb/first"
+    | "/(category)/mcb/third";
 }
 
 export interface Home {
@@ -25,7 +25,7 @@ export interface Home {
   title: string;
   desc: string;
   image: ImageProps;
-  uri: "/(auth)/login" | "/(tabs)";
+  uri: "/screens/signin" | "/(tabs)";
 }
 
 export interface ItemProps {

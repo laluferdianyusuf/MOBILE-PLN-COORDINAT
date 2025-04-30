@@ -99,12 +99,14 @@ const index = () => {
             <View className="pt-16 pb-6 px-6 flex-1 gap-7">
               <View className="flex-row justify-between item-center">
                 <View className="flex-row items-center gap-3">
-                  <Pressable
-                    className="p-2 rounded-full bg-gray-100"
-                    onPress={() => router.push("/screens/history")}
-                  >
-                    <ClockClockwise size={32} color="#4b5563" />
-                  </Pressable>
+                  {user.role === "supervisor" && (
+                    <Pressable
+                      className="p-2 rounded-full bg-gray-100"
+                      onPress={() => router.push("/screens/history")}
+                    >
+                      <ClockClockwise size={32} color="#4b5563" />
+                    </Pressable>
+                  )}
                   <Pressable
                     className="p-2 rounded-full bg-gray-100"
                     onPress={() => router.push("/screens/table")}

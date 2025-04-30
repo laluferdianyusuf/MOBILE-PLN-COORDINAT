@@ -15,7 +15,7 @@ export const category: Category[] = [
     desc: "More about teacher",
     primary: "bg-custom-info-1",
     color: "bg-custom-light-purple-1",
-    uri: "/screens/mcb/first",
+    uri: "/(category)/mcb/first",
   },
   {
     id: "mcb_3_phase",
@@ -24,11 +24,11 @@ export const category: Category[] = [
     desc: "More about student",
     primary: "bg-custom-light-purple-1",
     color: "bg-custom-light-purple-2",
-    uri: "/screens/mcb/third",
+    uri: "/(category)/mcb/third",
   },
 ];
 
-const mcb = () => {
+const index = () => {
   const handlePressItem = (item: Category) => {
     router.push({
       pathname: item.uri as any,
@@ -66,4 +66,4 @@ const mcb = () => {
   );
 };
 
-export default mcb;
+export default index;

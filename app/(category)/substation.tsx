@@ -201,12 +201,14 @@ const substation = () => {
               text="Hitung"
               className="flex-1"
             />
-            <CustomButton
-              isDisable={isHistoryLoading}
-              onPress={generateNewHistory}
-              text={`${isHistoryLoading ? "Loading..." : "Simpan"}`}
-              className="flex-1"
-            />
+            {user.role === "supervisor" && (
+              <CustomButton
+                isDisable={isHistoryLoading}
+                onPress={generateNewHistory}
+                text={`${isHistoryLoading ? "Loading..." : "Simpan"}`}
+                className="flex-1"
+              />
+            )}
           </View>
         </ScrollView>
       </View>

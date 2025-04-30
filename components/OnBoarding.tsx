@@ -1,11 +1,4 @@
-import {
-  Animated,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  ViewToken,
-} from "react-native";
+import { Animated, FlatList, Text, View, ViewToken } from "react-native";
 import type { FlatList as FlatListType } from "react-native";
 import React, { useState, useRef } from "react";
 import { slides } from "@/utils/category";
@@ -90,5 +83,3 @@ const OnBoarding: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 };
 
 export default OnBoarding;
-
-const styles = StyleSheet.create({});

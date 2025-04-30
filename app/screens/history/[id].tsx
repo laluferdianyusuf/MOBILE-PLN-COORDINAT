@@ -17,14 +17,23 @@ const renderData = (data: any, level = 0): JSX.Element => {
   if (Array.isArray(data)) {
     return (
       <View style={{ paddingLeft }} className="space-y-2">
-        {data.map((item, index) => (
-          <View
-            key={index}
-            className="p-2 rounded-lg border border-gray-100 bg-gray-50"
-          >
-            {renderData(item, level + 1)}
-          </View>
-        ))}
+        {data.map((item, index) =>
+          typeof item === "object" && item !== null ? (
+            <View
+              key={index}
+              className="p-2 rounded-lg border border-gray-100 bg-gray-50"
+            >
+              {renderData(item, level + 1)}
+            </View>
+          ) : (
+            <Text
+              key={index}
+              className="text-gray-800 font-artegra-medium text-sm"
+            >
+              Trafo {index + 1}: {String(item)}
+            </Text>
+          )
+        )}
       </View>
     );
   }

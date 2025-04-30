@@ -24,7 +24,7 @@ interface LoginFormData {
   password: string;
 }
 
-const LoginScreen: React.FC = ({}) => {
+const signin: React.FC = ({}) => {
   const dispatch: AppDispatch = useDispatch();
   const [apiError, setApiError] = useState<string>("");
   const backPressCount = useRef(0);
@@ -190,4 +190,4 @@ const LoginScreen: React.FC = ({}) => {
   );
 };
 
-export default LoginScreen;
+export default signin;
