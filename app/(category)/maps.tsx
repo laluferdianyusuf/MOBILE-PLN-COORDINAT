@@ -199,6 +199,7 @@ export default function AngleMapScreen() {
       points: currentLocation,
       address: addressName,
       angle: `${angle}°`,
+      tm: tm,
     },
     background: "bg-custom-light-blue-1",
   };
