@@ -121,10 +121,10 @@ const FuseLinkPercabangan = () => {
               keyboard="numeric"
             />
             <CustomInput
-              title="Jenis Trafo (optional)"
+              title="Nama Percabangan"
               value={type}
               onChange={(text) => setType(text)}
-              placeholder="Contoh: Trafo isolasi"
+              placeholder="Contoh: FCO Alas Kota"
               keyboard="default"
             />
             {result !== null && (

@@ -4,8 +4,10 @@ import {
   CarBattery,
   Compass,
   Intersection,
+  LineSegment,
   SubsetOf,
   SupersetOf,
+  Table,
 } from "phosphor-react-native";
 
 export const category: Category[] = [
@@ -62,6 +64,24 @@ export const category: Category[] = [
     primary: "bg-custom-indigo-1",
     color: "bg-custom-error-1",
     uri: "/(category)/balancer",
+  },
+  {
+    id: "single_line",
+    name: "Single Line Diagram",
+    icon: <LineSegment size={35} color="black" />,
+    desc: "More about calendar",
+    primary: "bg-custom-indigo-1",
+    color: "bg-custom-green-3",
+    uri: "/(category)/diagram",
+  },
+  {
+    id: "kha_table",
+    name: "Tabel KHA",
+    icon: <Table size={35} color="black" />,
+    desc: "More about calendar",
+    primary: "bg-custom-indigo-1",
+    color: "bg-custom-light-green-2",
+    uri: "/(category)/table",
   },
 ];
 

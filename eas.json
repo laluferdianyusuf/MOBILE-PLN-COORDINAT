@@ -20,7 +20,8 @@
       "autoIncrement": true,
       "developmentClient": false,
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "app-bundle",
+        "credentialsSource": "local"
       },
       "channel": "production"
     }

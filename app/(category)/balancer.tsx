@@ -135,16 +135,9 @@ const balancer = () => {
                 </Text>
                 <Text className="text-sm text-gray-600 font-artegra">
                   • IR, IS, dan IT adalah nilai arus yang diukur pada
-                  masing-masing fasa gardu yang Anda masukkan. {"\n"}• Langkah
-                  pertama adalah menghitung **LWBP (Load Without Balance
-                  Penalty)**. LWBP dihitung sebagai rata-rata dari nilai IR, IS,
-                  dan IT. {"\n"}• Langkah kedua adalah menghitung **WBP (With
-                  Balance Penalty)**. WBP adalah hasil dari LWBP × 1.667. {"\n"}
-                  • Selisih antara LWBP dan WBP menunjukkan seberapa besar
-                  ketidakseimbangan beban. Semakin kecil selisih, semakin
-                  seimbang arus antar fasa. {"\n"}• Jika terjadi perbedaan besar
-                  antar fasa, beban perlu disesuaikan agar distribusi arus lebih
-                  merata.
+                  masing-masing fasa gardu yang Anda masukkan. {"\n"}• Jika
+                  terjadi perbedaan besar antar fasa, beban perlu disesuaikan
+                  agar distribusi arus lebih merata.
                 </Text>
 
                 <Text className="text-sm text-gray-600 font-artegra mt-4">

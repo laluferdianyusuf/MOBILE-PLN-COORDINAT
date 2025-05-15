@@ -194,12 +194,12 @@ export default function AngleMapScreen() {
   const payload = {
     category: "maps",
     title: "Menentukan Angle",
-    description: `Hasil angle yang di dapatkan ${angle}`,
+    description: `Hasil angle yang di dapatkan ${angle}°`,
     value: {
       points: currentLocation,
       address: addressName,
       angle: `${angle}°`,
-      tm: tm,
+      tm: `Berdasarkan titik GPS yg anda input, maka konstruksi yang seharusnya terpasang adalah ${tm}`,
     },
     background: "bg-custom-light-blue-1",
   };
@@ -268,9 +268,24 @@ export default function AngleMapScreen() {
           </Marker>
         )}
 
-        {allPoint.length >= 2 && (
+        {/* {allPoint.length >= 2 && (
           <Polyline
             coordinates={coordinates}
+            strokeColor="yellow"
+            strokeWidth={3}
+          />
+        )} */}
+
+        {main && pointA && (
+          <Polyline
+            coordinates={[main, pointA]}
+            strokeColor="yellow"
+            strokeWidth={3}
+          />
+        )}
+        {main && pointB && (
+          <Polyline
+            coordinates={[main, pointB]}
             strokeColor="yellow"
             strokeWidth={3}
           />
@@ -278,11 +293,11 @@ export default function AngleMapScreen() {
 
         {coordinates.length === 3 && (
           <>
-            <Polyline
+            {/* <Polyline
               coordinates={coordinates}
               strokeColor="yellow"
               strokeWidth={3}
-            />
+            /> */}
 
             <Polygon
               coordinates={coordinates}
@@ -307,38 +322,41 @@ export default function AngleMapScreen() {
             <Text className="font-artegra text-2xl">Sudut: {angle}°</Text>
           )}
           {tm && (
-            <Text className="font-artegra text-lg text-blue-500">
-              Kategori: {tm}
-            </Text>
+            <View className="bg-white p-3 rounded-xl">
+              <Text className="font-artegra text-xs text-justify text-blue-500">
+                Berdasarkan titik GPS yg anda input, maka konstruksi yang
+                seharusnya terpasang adalah {tm}
+              </Text>
+            </View>
           )}
         </View>
         <Pressable
           onPress={() => takePoint(setMain)}
-          className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
+          className="bg-white p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
           <Text className="font-artegra self-center">Tiang Utama</Text>
         </Pressable>
         <Pressable
           onPress={() => takePoint(setPointA)}
-          className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
+          className="bg-white p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
           <Text className="font-artegra self-center">Titik Sebelum</Text>
         </Pressable>
         <Pressable
           onPress={() => takePoint(setPointB)}
-          className="bg-gray-50 p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
+          className="bg-white p-1 rounded-xl border border-gray-200 flex flex-row items-center justify-center gap-3"
         >
           <Text className="font-artegra self-center">Titik Sesudah</Text>
         </Pressable>
         <Pressable
           onPress={resetPoint}
-          className="bg-gray-50 p-1 rounded-xl border border-gray-200 "
+          className="bg-white p-1 rounded-xl border border-gray-200 "
         >
           <Text className="font-artegra self-center">Reset Titik</Text>
         </Pressable>
         <Pressable
           onPress={takeScreenshot}
-          className="bg-gray-50 p-1 rounded-xl border border-gray-200"
+          className="bg-white p-1 rounded-xl border border-gray-200"
         >
           <Text className="font-artegra self-center">
             Simpan Map Ke Gallery
@@ -348,7 +366,7 @@ export default function AngleMapScreen() {
           <Pressable
             disabled={isHistoryLoading}
             onPress={generateNewHistory}
-            className="bg-gray-50 p-1 rounded-xl border border-gray-200"
+            className="bg-white p-1 rounded-xl border border-gray-200"
           >
             <Text className="font-artegra self-center">
               {isHistoryLoading ? "Loading..." : "Simpan Data"}

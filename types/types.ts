@@ -17,7 +17,9 @@ export interface Category {
     | "/(category)/mcb"
     | "/(category)/balancer"
     | "/(category)/mcb/first"
-    | "/(category)/mcb/third";
+    | "/(category)/mcb/third"
+    | "/(category)/table"
+    | "/(category)/diagram";
 }
 
 export interface Home {

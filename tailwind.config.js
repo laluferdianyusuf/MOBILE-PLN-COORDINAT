@@ -13,6 +13,7 @@ module.exports = {
       colors: {
         "custom-green-1": "#14B8A6",
         "custom-green-2": "#0D9485",
+        "custom-green-3": "#a8ffbd",
         "custom-blue-1": "#F1F5F9",
         "custom-white-1": "#F2F2F2",
         "custom-white-2": "#CECECE",
@@ -40,6 +41,7 @@ module.exports = {
         "custom-light-blue-2": "#2fabe0",
         "custom-light-yellow-1": "#fff4bf",
         "custom-light-green-1": "#e0f7dc",
+        "custom-light-green-2": "#a8ffbd",
         "custom-light-purple-1": "#ede4f5",
         "custom-light-purple-2": "#dbc8ea",
         "custom-light-purple-3": "#ac81cb",

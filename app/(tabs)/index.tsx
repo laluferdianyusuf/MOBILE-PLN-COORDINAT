@@ -1,18 +1,15 @@
 import {
   BackHandler,
   FlatList,
+  ImageBackground,
   Pressable,
+  StyleSheet,
   Text,
   ToastAndroid,
   View,
 } from "react-native";
 import React, { useCallback, useEffect, useRef } from "react";
-import {
-  ClockClockwise,
-  Plugs,
-  PlugsConnected,
-  Scroll,
-} from "phosphor-react-native";
+import { ClockClockwise, Plugs, PlugsConnected } from "phosphor-react-native";
 import { Category } from "@/types/types";
 import { ThemedView } from "@/components/ThemedView";
 import CategoryItem from "@/components/CategoryItem";
@@ -96,40 +93,42 @@ const index = () => {
       ) : (
         <GestureHandlerRootView className="flex-1 justify-center">
           <BottomSheetModalProvider>
-            <View className="pt-16 pb-6 px-6 flex-1 gap-7">
-              <View className="flex-row justify-between item-center">
-                <View className="flex-row items-center gap-3">
-                  {user.role === "supervisor" && (
-                    <Pressable
-                      className="p-2 rounded-full bg-gray-100"
-                      onPress={() => router.push("/screens/history")}
-                    >
-                      <ClockClockwise size={32} color="#4b5563" />
-                    </Pressable>
-                  )}
+            <View className="flex-1">
+              <ImageBackground
+                source={require("@/assets/images/background.png")}
+                resizeMode="cover"
+                style={styles.imageBackground}
+              >
+                {/* Overlay transparan */}
+                <View style={styles.overlay} />
+                <View className="flex-row justify-between item-center">
+                  <View className="flex-row items-center gap-3">
+                    {user.role === "supervisor" && (
+                      <Pressable
+                        className="p-2 rounded-full bg-gray-100"
+                        onPress={() => router.push("/screens/history")}
+                      >
+                        <ClockClockwise size={32} color="#4b5563" />
+                      </Pressable>
+                    )}
+                  </View>
                   <Pressable
-                    className="p-2 rounded-full bg-gray-100"
-                    onPress={() => router.push("/screens/table")}
+                    className="p-2 rounded-full bg-custom-error-1"
+                    onPress={handlePresentModalPress}
                   >
-                    <Scroll size={32} color="#4b5563" />
+                    <PlugsConnected size={32} color="#de5757" />
                   </Pressable>
                 </View>
-                <Pressable
-                  className="p-2 rounded-full bg-custom-error-1"
-                  onPress={handlePresentModalPress}
-                >
-                  <PlugsConnected size={32} color="#de5757" />
-                </Pressable>
-              </View>
-              <View className="mt-[35px]">
-                <Text className="text-4xl font-artegra-bold capitalize">
-                  Hi {user.username},{" "}
-                </Text>
-                <Text className="text-4xl font-artegra-bold">
-                  Pilih fitur yang kamu butuhkan.
-                </Text>
-              </View>
-              <View className="flex-1">
+                <View className="mt-[35px]">
+                  <Text className="text-4xl text-white font-artegra-bold capitalize">
+                    Hi {user.username},{" "}
+                  </Text>
+                  <Text className="text-4xl font-artegra-bold text-white">
+                    Pilih fitur yang kamu butuhkan.
+                  </Text>
+                </View>
+              </ImageBackground>
+              <View className="flex-1 bg-white px-6 py-6">
                 <FlatList
                   data={category}
                   renderItem={({ item, index }) => (
@@ -166,5 +165,18 @@ const index = () => {
     </ThemedView>
   );
 };
+
+const styles = StyleSheet.create({
+  imageBackground: {
+    paddingTop: 64,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    position: "relative",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(192, 229, 247, 0.7)",
+  },
+});
 
 export default index;

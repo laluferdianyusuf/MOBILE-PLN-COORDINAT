@@ -130,10 +130,10 @@ const substation = () => {
               keyboard="numeric"
             />
             <CustomInput
-              title="Masukkan Jenis Gardu (optional)"
+              title="Nama Gardu"
               value={type}
               onChange={(text) => setType(text)}
-              placeholder="Contoh: Gardu tiang besi"
+              placeholder="Contoh: AL001"
               keyboard="default"
             />
 

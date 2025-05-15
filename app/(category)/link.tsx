@@ -91,8 +91,8 @@ const link = () => {
             <CustomInput
               value={type}
               style=""
-              placeholder="Contoh : Gardu tiang besi"
-              title="Tipe gardu (optional)"
+              placeholder="Contoh : AL001"
+              title="Nama gardu"
               onChange={(text) => setType(text)}
               keyboard="default"
             />
