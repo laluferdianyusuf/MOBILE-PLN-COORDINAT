@@ -17,7 +17,7 @@ export const category: Category[] = [
     icon: <Compass size={35} color="black" />,
     desc: "More about teacher",
     primary: "bg-custom-info-1",
-    color: "bg-custom-light-blue-1",
+    color: "bg-custom-grey-5",
     uri: "/(category)/maps",
   },
   {
@@ -35,7 +35,7 @@ export const category: Category[] = [
     icon: <SupersetOf size={35} color="black" />,
     desc: "More about attendance",
     primary: "bg-custom-success-1",
-    color: "bg-custom-light-green-1",
+    color: "bg-custom-grey-5",
     uri: "/(category)/branch",
   },
   {
@@ -44,7 +44,7 @@ export const category: Category[] = [
     icon: <Intersection size={35} color="black" />,
     desc: "More about calendar",
     primary: "bg-custom-indigo-1",
-    color: "bg-custom-light-yellow-1",
+    color: "bg-custom-grey-5",
     uri: "/(category)/substation",
   },
   {
@@ -53,7 +53,7 @@ export const category: Category[] = [
     icon: <CarBattery size={35} color="black" />,
     desc: "More about calendar",
     primary: "bg-custom-indigo-1",
-    color: "bg-custom-light-purple-1",
+    color: "bg-custom-grey-5",
     uri: "/(category)/mcb",
   },
   {
@@ -62,7 +62,7 @@ export const category: Category[] = [
     icon: <BezierCurve size={35} color="black" />,
     desc: "More about calendar",
     primary: "bg-custom-indigo-1",
-    color: "bg-custom-error-1",
+    color: "bg-custom-grey-5",
     uri: "/(category)/balancer",
   },
   {
@@ -71,7 +71,7 @@ export const category: Category[] = [
     icon: <LineSegment size={35} color="black" />,
     desc: "More about calendar",
     primary: "bg-custom-indigo-1",
-    color: "bg-custom-green-3",
+    color: "bg-custom-grey-5",
     uri: "/(category)/diagram",
   },
   {
@@ -80,7 +80,7 @@ export const category: Category[] = [
     icon: <Table size={35} color="black" />,
     desc: "More about calendar",
     primary: "bg-custom-indigo-1",
-    color: "bg-custom-light-green-2",
+    color: "bg-custom-grey-5",
     uri: "/(category)/table",
   },
 ];

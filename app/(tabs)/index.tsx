@@ -99,7 +99,6 @@ const index = () => {
                 resizeMode="cover"
                 style={styles.imageBackground}
               >
-                {/* Overlay transparan */}
                 <View style={styles.overlay} />
                 <View className="flex-row justify-between item-center">
                   <View className="flex-row items-center gap-3">
@@ -120,10 +119,10 @@ const index = () => {
                   </Pressable>
                 </View>
                 <View className="mt-[35px]">
-                  <Text className="text-4xl text-white font-artegra-bold capitalize">
+                  <Text className="text-2xl text-custom-black-1 font-artegra-bold capitalize">
                     Hi {user.username},{" "}
                   </Text>
-                  <Text className="text-4xl font-artegra-bold text-white">
+                  <Text className="text-2xl font-artegra-bold text-custom-black-1">
                     Pilih fitur yang kamu butuhkan.
                   </Text>
                 </View>
@@ -175,7 +174,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(192, 229, 247, 0.7)",
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
   },
 });
 

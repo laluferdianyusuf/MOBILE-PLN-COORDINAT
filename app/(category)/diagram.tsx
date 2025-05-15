@@ -20,7 +20,7 @@ const diagram = () => {
         </View>
         <View className="gap-5 flex-1 justify-center">
           <Pressable onPress={openDiagram} className="">
-            <Text className="text-blue-600 underline text-center font-artegra font-bold">
+            <Text className="text-custom-light-blue-2 underline text-center font-artegra font-bold">
               https://bit.ly/SLD_ALAS
             </Text>
           </Pressable>
@@ -31,7 +31,7 @@ const diagram = () => {
           </View>
           <Pressable
             onPress={openDiagram}
-            className="bg-blue-600 px-4 py-3 rounded-lg items-center"
+            className="bg-custom-light-blue-2 px-4 py-3 rounded-lg items-center"
           >
             <Text className="text-white font-bold text-center">
               Buka Diagram

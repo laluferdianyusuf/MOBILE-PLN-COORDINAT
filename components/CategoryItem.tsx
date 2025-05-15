@@ -10,7 +10,7 @@ interface CategoryItemProps {
 const CategoryItem: React.FC<CategoryItemProps> = ({ item, handlePress }) => {
   return (
     <Pressable
-      className={`rounded-3xl items-center justify-center flex-1 ${
+      className={`rounded-3xl items-center justify-center border border-gray-100 flex-1 ${
         item.color
       } px-3 py-6 ${item.id === "fuse_link" ? "border border-gray-100" : ""}`}
       onPress={handlePress}
