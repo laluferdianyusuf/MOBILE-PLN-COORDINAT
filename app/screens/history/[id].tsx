@@ -4,8 +4,8 @@ import { Text, View, ScrollView, Pressable, ToastAndroid } from "react-native";
 import { captureRef } from "react-native-view-shot";
 import { useEffect, useRef } from "react";
 import { House, ShareNetwork } from "phosphor-react-native";
-import * as FileSystem from "expo-file-system";
-import * as Sharing from "expo-sharing";
+import { copyAsync, cacheDirectory } from "expo-file-system";
+import { shareAsync } from "expo-sharing";
 import { useHistoryData } from "@/hooks/useHistoryHooks";
 import { LoadingWave } from "@/components";
 
@@ -84,14 +84,14 @@ const HistoryDetail = () => {
         quality: 1,
       });
 
-      const fileName = `${FileSystem.cacheDirectory}history-${Date.now()}.png`;
+      const fileName = `${cacheDirectory}history-${Date.now()}.png`;
 
-      await FileSystem.copyAsync({
+      await copyAsync({
         from: uri,
         to: fileName,
       });
 
-      await Sharing.shareAsync(fileName, {
+      await shareAsync(fileName, {
         mimeType: "image/png",
         dialogTitle: "Bagikan hasil perhitungan",
         UTI: "image/png",

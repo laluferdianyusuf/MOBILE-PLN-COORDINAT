@@ -102,7 +102,7 @@ const index = () => {
                 <View style={styles.overlay} />
                 <View className="flex-row justify-between item-center">
                   <View className="flex-row items-center gap-3">
-                    {user.role === "supervisor" && (
+                    {user.role !== "guest" && (
                       <Pressable
                         className="p-2 rounded-full bg-gray-100"
                         onPress={() => router.push("/screens/history")}
@@ -119,8 +119,8 @@ const index = () => {
                   </Pressable>
                 </View>
                 <View className="mt-[35px]">
-                  <Text className="text-2xl text-custom-black-1 font-artegra-bold capitalize">
-                    Hi {user.username},{" "}
+                  <Text className="text-2xl text-custom-black-1 font-artegra-bold">
+                    Hi {user.name},{" "}
                   </Text>
                   <Text className="text-2xl font-artegra-bold text-custom-black-1">
                     Pilih fitur yang kamu butuhkan.

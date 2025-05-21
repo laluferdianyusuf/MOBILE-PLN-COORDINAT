@@ -23,11 +23,9 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ item, handlePress }) => {
         >
           {item.icon}
         </View>
-        <View className="text-center items-center">
-          <Text className="font-artegra-bold text-xl text-center">
-            {item.name}
-          </Text>
-        </View>
+        <Text className="font-artegra-bold text-xl text-center">
+          {item.name}
+        </Text>
       </View>
     </Pressable>
   );

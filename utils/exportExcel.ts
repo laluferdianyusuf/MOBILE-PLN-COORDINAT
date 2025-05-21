@@ -1,6 +1,10 @@
-import * as FileSystem from "expo-file-system";
+import {
+  cacheDirectory,
+  EncodingType,
+  writeAsStringAsync,
+} from "expo-file-system";
 import XLSX from "xlsx";
-import * as Sharing from "expo-sharing";
+import { shareAsync, isAvailableAsync } from "expo-sharing";
 import { ToastAndroid } from "react-native";
 
 interface FilteredDataItem {
@@ -48,16 +52,14 @@ export const generateAndShareExcel = async (history: any[]) => {
 
     const wbout = XLSX.write(workbook, { type: "base64", bookType: "xlsx" });
 
-    const fileName = `${
-      FileSystem.cacheDirectory
-    }riwayat_penggunaan-${Date.now()}.xlsx`;
+    const fileName = `${cacheDirectory}PEKA Listrik-${Date.now()}.xlsx`;
 
-    await FileSystem.writeAsStringAsync(fileName, wbout, {
-      encoding: FileSystem.EncodingType.Base64,
+    await writeAsStringAsync(fileName, wbout, {
+      encoding: EncodingType.Base64,
     });
 
-    if (await Sharing.isAvailableAsync()) {
-      await Sharing.shareAsync(fileName, {
+    if (await isAvailableAsync()) {
+      await shareAsync(fileName, {
         mimeType:
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         dialogTitle: "Bagikan File Excel",

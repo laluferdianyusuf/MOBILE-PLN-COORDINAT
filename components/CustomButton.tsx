@@ -22,7 +22,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     <Pressable
       disabled={isDisable}
       onPress={onPress}
-      className={`${className} p-2 px-4 bg-blue-400 rounded-xl`}
+      className={`${className} p-2 px-4 bg-custom-light-blue-2 rounded-xl`}
     >
       <Text className={`font-artegra text-center ${textClass}`}>{text}</Text>
     </Pressable>

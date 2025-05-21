@@ -12,7 +12,8 @@ interface CustomInputProps {
     | "email-address"
     | "numeric"
     | "phone-pad"
-    | "decimal-pad";
+    | "decimal-pad"
+    | "url";
   isPassword?: boolean;
   style?: string;
   onChange?: (text: string) => void;

@@ -20,6 +20,7 @@ module.exports = {
         "custom-black-1": "#23272E",
         "custom-error-1": "#fae8e8",
         "custom-error-2": "#de5757",
+        "custom-error-3": "#f5d6d8",
         "custom-success-1": "#ebf5ec",
         "custom-success-2": "#47a855",
         "custom-warning-1": "#fcf3eb",

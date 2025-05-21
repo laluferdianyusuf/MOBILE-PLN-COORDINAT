@@ -3,7 +3,10 @@ import { View, Text, Pressable, ToastAndroid } from "react-native";
 import MapView, { Marker, Polyline, LatLng, Polygon } from "react-native-maps";
 import * as Location from "expo-location";
 import { captureRef } from "react-native-view-shot";
-import * as MediaLibrary from "expo-media-library";
+import {
+  saveToLibraryAsync,
+  requestPermissionsAsync,
+} from "expo-media-library";
 import { BackButton } from "@/components/BackButton";
 import { router } from "expo-router";
 import { useHistoryData } from "@/hooks/useHistoryHooks";
@@ -169,7 +172,7 @@ export default function AngleMapScreen() {
   };
 
   const takeScreenshot = async () => {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
+    const { status } = await requestPermissionsAsync();
     if (status !== "granted") {
       ToastAndroid.show("Izin media tidak diberikan", ToastAndroid.SHORT);
       return;
@@ -180,7 +183,7 @@ export default function AngleMapScreen() {
       quality: 1,
     });
 
-    await MediaLibrary.saveToLibraryAsync(uri);
+    await saveToLibraryAsync(uri);
     ToastAndroid.show("Screenshot Disimpan", ToastAndroid.SHORT);
   };
 
@@ -362,7 +365,7 @@ export default function AngleMapScreen() {
             Simpan Map Ke Gallery
           </Text>
         </Pressable>
-        {user.role === "supervisor" && (
+        {user.role !== "guest" && (
           <Pressable
             disabled={isHistoryLoading}
             onPress={generateNewHistory}

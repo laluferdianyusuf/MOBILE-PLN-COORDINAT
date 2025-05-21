@@ -41,7 +41,7 @@ const OnBoarding: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     <ThemedView className="flex-1">
       <View className="pt-16 pb-6 flex-1 gap-10 justify-center items-center">
         <View className="flex-row items-center justify-center pb-4">
-          <Text className="font-artegra-bold text-xl">Ampere Pro</Text>
+          <Text className="font-artegra-bold text-xl">PEKA Listrik</Text>
         </View>
         <View className="flex-1">
           <FlatList

@@ -4,65 +4,29 @@ import { BackButton, CustomInput } from "@/components";
 import { ThemedView } from "@/components/ThemedView";
 import { login } from "@/redux/reducers";
 import { AppDispatch } from "@/redux/store";
-import { router } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
-  BackHandler,
   Pressable,
   ScrollView,
   Text,
-  ToastAndroid,
   View,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { z } from "zod";
-import { useIsFocused } from "@react-navigation/native";
 
 interface LoginFormData {
   username: string;
   password: string;
+  role?: string;
 }
 
 const signin: React.FC = ({}) => {
+  const { role } = useLocalSearchParams();
   const dispatch: AppDispatch = useDispatch();
   const [apiError, setApiError] = useState<string>("");
-  const backPressCount = useRef(0);
-  const backPressTimer = useRef<NodeJS.Timeout | null>(null);
-  const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const handleBackPress = () => {
-      if (backPressCount.current === 0) {
-        backPressCount.current += 1;
-        ToastAndroid.show("Tekan sekali lagi untuk keluar", ToastAndroid.SHORT);
-
-        backPressTimer.current = setTimeout(() => {
-          backPressCount.current = 0;
-        }, 3000);
-
-        return true;
-      } else {
-        clearTimeout(backPressTimer.current as NodeJS.Timeout);
-        BackHandler.exitApp();
-        return true;
-      }
-    };
-
-    if (isFocused) {
-      backPressCount.current = 0;
-      BackHandler.addEventListener("hardwareBackPress", handleBackPress);
-    } else {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-      clearTimeout(backPressTimer.current as NodeJS.Timeout);
-    }
-
-    return () => {
-      BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
-      clearTimeout(backPressTimer.current as NodeJS.Timeout);
-    };
-  }, [isFocused]);
 
   const loginSchema = z.object({
     username: z
@@ -89,7 +53,11 @@ const signin: React.FC = ({}) => {
   const handleLogin = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      await dispatch(login(data)).unwrap();
+      const payload = {
+        ...data,
+        role: typeof role === "string" ? role : undefined,
+      };
+      await dispatch(login(payload)).unwrap();
       router.push("/(tabs)");
     } catch (error: any) {
       if (error?.message) {

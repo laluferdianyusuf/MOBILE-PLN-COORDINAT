@@ -1,4 +1,5 @@
 import {
+  Dimensions,
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
@@ -17,37 +18,34 @@ import CustomButton from "@/components/CustomButton";
 import { useUserData } from "@/hooks/useUserHooks";
 import { useHistoryData } from "@/hooks/useHistoryHooks";
 import { LoadingWave } from "@/components";
-import { Dimensions } from "react-native";
 
-const link = () => {
+const wbp = () => {
   const { user, validateUser, isLoading } = useUserData({});
-  const [power, setPower] = useState<string>("");
-  const [voltage, setVoltage] = useState<string>("");
+  const [lwbp, setLwbp] = useState("");
+  const [wbp, setWbp] = useState<number | null>(null);
   const [type, setType] = useState<string>("");
-  const [result, setResult] = useState<number | null>(null);
 
   useEffect(() => {
     validateUser();
   }, []);
 
-  const handleFuseLink = () => {
-    const POWER = parseFloat(power) || 0;
-    const VOLTAGE = parseFloat(voltage) || 0;
-    const fuseLinkResult = POWER / (VOLTAGE * Math.sqrt(3));
-    setResult(fuseLinkResult);
+  const calculate = () => {
+    const WBP = parseFloat(lwbp) * 1.667;
+
+    setWbp(WBP);
   };
 
   const payload = {
-    category: "fuse_link",
-    title: "Menghitung Fuse Link Gardu",
-    description: `Hasil perhitungan Fuse Link Gardu`,
+    category: "wbp",
+    title: "Menentukan WBP (Waktu Beban Puncak)",
+    description: `Hasil mengitung WBP (waktu Beban Puncak)`,
     type: type,
     value: {
-      power: power,
-      voltage: voltage,
-      result: result,
+      lwbp: lwbp,
+      wbp: wbp,
+      selisih: `${(parseFloat(lwbp!) - wbp!).toFixed(2)} A`,
     },
-    background: "bg-custom-grey-5",
+    background: "bg-custom-error-3",
   };
 
   const { generateNewHistory, isLoadingGenerate: isHistoryLoading } =
@@ -57,17 +55,15 @@ const link = () => {
     });
 
   const saveHistory = () => {
-    if (result) {
+    if (wbp) {
       generateNewHistory();
     } else {
       ToastAndroid.show("Hitung terlebih dahulu", ToastAndroid.SHORT);
     }
   };
-
   const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
-
   return (
-    <ThemedView className="flex-1 ">
+    <ThemedView className={`flex-1`}>
       <ImageBackground
         source={require("@/assets/images/form-bg.png")}
         resizeMode="cover"
@@ -84,8 +80,8 @@ const link = () => {
             <View className="pt-16 pb-6 px-6 flex-1 bg-white/90">
               <View className="flex-row items-center justify-between pb-6">
                 <BackButton onBack={() => router.back()} />
-                <Text className="font-artegra text-xl">
-                  Perhitungan Fuse Link
+                <Text className="font-artegra-bold text-xl">
+                  WBP (Waktu Beban Puncak)
                 </Text>
                 <View className="opacity-0" />
               </View>
@@ -96,70 +92,67 @@ const link = () => {
                 contentContainerClassName="justify-center"
               >
                 <View className="flex-1">
-                  <View className="mb-4 p-4 bg-gray-100 rounded-lg border border-gray-300">
-                    <Text className="text-base font-artegra text-gray-800 font-semibold mb-2">
-                      Rumus Fuse Link Gardu:
+                  <View className="mb-4 p-4 rounded-xl bg-red-100 border border-red-300">
+                    <Text className="text-red-900 text-lg mb-2 font-artegra-bold">
+                      Rumus WBP:
                     </Text>
-                    <Text className="text-base font-artegra text-gray-700">
-                      I = P / (√3 × V)
-                    </Text>
-                    <Text className="text-sm font-artegra-italic text-gray-500 mt-1">
-                      I = Arus, P = Daya (Watt), V = Tegangan (Volt)
+                    <Text className="text-base text-gray-700 font-artegra">
+                      Rumus WBP = LWBP (Luar Beban Waktu Puncak) × 166,7%
                     </Text>
                   </View>
-
                   <CustomInput
-                    value={power}
-                    style=""
-                    placeholder="Contoh : 100000"
-                    title="Masukan Daya"
-                    onChange={(text) => setPower(text)}
+                    title="Masukkan LWBP"
+                    value={lwbp}
+                    onChange={(text) => setLwbp(text)}
+                    placeholder="Contoh: 10"
                     keyboard="numeric"
                   />
                   <CustomInput
-                    value={voltage}
-                    style=""
-                    placeholder="Contoh : 20000"
-                    title="Masukan Tegangan"
-                    onChange={(text) => setVoltage(text)}
-                    keyboard="numeric"
-                  />
-                  <CustomInput
+                    title="Kode Gardu"
                     value={type}
-                    style=""
-                    placeholder="Contoh : AL001"
-                    title="Nama gardu"
                     onChange={(text) => setType(text)}
+                    placeholder="Contoh: AL001"
                     keyboard="default"
                   />
-                  {result !== null && (
+                  {wbp !== null && (
                     <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
-                      <Text className="text-xl font-artegra-bold text-gray-800 mb-2">
-                        Hasil Fuse Link Gardu
+                      <Text className="text-gray-800 text-lg mb-2 font-artegra-bold">
+                        Hasil Perhitungan:
                       </Text>
-                      <Text className="text-gray-800 font-artegra-bold text-lg mb-2">
-                        {result.toFixed(2)} A
+
+                      <Text className="text-gray-700 text-base font-artegra">
+                        • LWBP = {parseFloat(lwbp)} A
                       </Text>
-                      <Text className="text-sm text-gray-700">
-                        Perhitungan: I = P / (√3 × V) = {power} / (√3 ×{" "}
-                        {voltage}) ={" "}
-                        {(
-                          parseFloat(power) /
-                          (Math.sqrt(3) * parseFloat(voltage) || 1)
-                        ).toFixed(2)}{" "}
-                        A
+
+                      <Text className="text-gray-700 text-base font-artegra">
+                        • WBP = {wbp.toFixed(2)} A {"\n"}• Selisih ={" "}
+                        {(parseFloat(lwbp) - wbp).toFixed(2)} A
                       </Text>
-                      <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
-                        Ini adalah arus fuse link berdasarkan daya & tegangan
-                        yang Anda masukkan.
+
+                      <Text className="text-sm text-gray-500 mt-2 font-artegra-italic">
+                        Penjelasan Hasil:
+                      </Text>
+
+                      <Text className="text-sm text-gray-600 font-artegra">
+                        • WBP adalah nilai arus pada waktu beban puncak,
+                        dihitung dari LWBP dengan mengalikannya sebesar 166,7%.{" "}
+                        {"\n"}• Nilai WBP digunakan untuk memperkirakan
+                        kapasitas arus maksimum saat sistem berada pada kondisi
+                        beban puncak. {"\n"}• Selisih antara LWBP dan WBP
+                        menunjukkan berapa besar peningkatan arus yang terjadi
+                        saat beban puncak dibandingkan dengan kondisi normal
+                        (luar beban puncak).
+                        {"\n"}• Nilai WBP yang jauh lebih tinggi dari LWBP
+                        menandakan sistem mengalami lonjakan arus saat puncak,
+                        yang perlu diperhatikan untuk menjaga kestabilan dan
+                        mencegah overloading pada gardu.
                       </Text>
                     </View>
                   )}
                 </View>
-
                 <View className="flex flex-row gap-3">
                   <CustomButton
-                    onPress={handleFuseLink}
+                    onPress={calculate}
                     text="Hitung"
                     className="flex-1"
                   />
@@ -181,4 +174,4 @@ const link = () => {
   );
 };
 
-export default link;
+export default wbp;

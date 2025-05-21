@@ -76,7 +76,7 @@ export const LoadingWave = () => {
   }));
 
   return (
-    <View className="flex-1 flex-row justify-center items-center">
+    <View className="flex-1 flex-row justify-center items-center bg-white/90">
       <Animated.View
         style={circleStyle1}
         className={"w-4 h-4 bg-custom-light-blue-2 rounded-full mx-2"}

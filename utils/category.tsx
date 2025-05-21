@@ -89,7 +89,7 @@ export const slides = [
   {
     id: "1",
     image: require("@/assets/images/first.png"),
-    title: "Selamat Datang di Ampere Pro",
+    title: "Selamat Datang di PEKA Listrik",
     description:
       "Aplikasi teknisi PLN yang membantu mempermudah pekerjaan lapangan, mulai dari kalkulasi fuse, MCB, hingga pengukuran sudut di peta.",
   },

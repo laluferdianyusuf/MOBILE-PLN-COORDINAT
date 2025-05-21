@@ -19,7 +19,9 @@ export interface Category {
     | "/(category)/mcb/first"
     | "/(category)/mcb/third"
     | "/(category)/table"
-    | "/(category)/diagram";
+    | "/(category)/diagram"
+    | "/(category)/balancer/lwbp"
+    | "/(category)/balancer/wbp";
 }
 
 export interface Home {
@@ -28,6 +30,7 @@ export interface Home {
   desc: string;
   image: ImageProps;
   uri: "/screens/signin" | "/(tabs)";
+  role: string;
 }
 
 export interface ItemProps {
@@ -87,7 +90,8 @@ export interface History {
     | "fuse_link"
     | "fuse_link_branch"
     | "nh_fuse_substation"
-    | "balancer";
+    | "lwbp"
+    | "wbp";
   title?: string;
   description?: string;
   type?: string;
