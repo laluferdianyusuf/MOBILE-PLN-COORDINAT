@@ -88,8 +88,8 @@ const lwbp = () => {
             <View className="pt-16 pb-6 px-6 flex-1 bg-white/90">
               <View className="flex-row items-center justify-between pb-6">
                 <BackButton onBack={() => router.back()} />
-                <Text className="font-artegra-bold text-xl">
-                  LWBP (Luar Beban Waktu Puncak)
+                <Text className="font-artegra-bold text-md">
+                  LWBP (Luar Waktu Beban Puncak)
                 </Text>
                 <View className="opacity-0" />
               </View>
@@ -102,11 +102,11 @@ const lwbp = () => {
                 <View className="flex-1">
                   <View className="mb-4 p-4 rounded-xl bg-red-100 border border-red-300">
                     <Text className="text-red-900 text-lg mb-2 font-artegra-bold">
-                      Rumus LWBP:
+                      Rumus Pemerataan Beban Gardu:
                     </Text>
 
                     <Text className="text-base text-gray-700 font-artegra">
-                      LWBP = (IR + IS + IT) / 3
+                      Rata - rata beban = (IR + IS + IT) / 3
                     </Text>
                     <Text className="text-sm text-gray-500 mt-1 font-artegra-italic">
                       IR, IS, IT adalah hasil pengukuran arus pada masing-masing
@@ -153,7 +153,7 @@ const lwbp = () => {
                       </Text>
 
                       <Text className="text-gray-700 text-base font-artegra">
-                        • LWBP = {lwbp.toFixed(2)} A {"\n"}
+                        • Rata - rata beban = {lwbp.toFixed(2)} A {"\n"}
                       </Text>
 
                       <Text className="text-sm text-gray-500 mt-2 font-artegra-italic">
