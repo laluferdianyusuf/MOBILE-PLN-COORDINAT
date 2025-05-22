@@ -9,7 +9,7 @@ import {
   ToastAndroid,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { BackButton } from "@/components/BackButton";
 import { router } from "expo-router";
@@ -21,8 +21,12 @@ import { LoadingWave } from "@/components";
 
 const wbp = () => {
   const { user, validateUser, isLoading } = useUserData({});
-  const [lwbp, setLwbp] = useState("");
-  const [wbp, setWbp] = useState<number | null>(null);
+  const [ir, setIr] = useState("");
+  const [is, setIs] = useState("");
+  const [it, setIt] = useState("");
+  const [lwbp, setLwbp] = useState<string>("");
+  const [wbp, setWbp] = useState<null | any>(null);
+
   const [type, setType] = useState<string>("");
 
   useEffect(() => {
@@ -30,23 +34,66 @@ const wbp = () => {
   }, []);
 
   const calculate = () => {
-    const WBP = parseFloat(lwbp) * 1.667;
+    const parsedIr = parseFloat(ir);
+    const parsedIs = parseFloat(is);
+    const parsedIt = parseFloat(it);
 
-    setWbp(WBP);
+    const irLwbp = parsedIr * 0.667;
+    const isLwbp = parsedIs * 0.667;
+    const itLwbp = parsedIt * 0.667;
+
+    const avg = (irLwbp + isLwbp + itLwbp) / 3;
+
+    const irCorrection = avg - irLwbp;
+    const isCorrection = avg - isLwbp;
+    const itCorrection = itLwbp - avg;
+
+    const hasil = {
+      lwbp: irLwbp.toFixed(2),
+      wbp: parsedIr.toFixed(2),
+      perFasa: {
+        ir: irLwbp.toFixed(2),
+        is: isLwbp.toFixed(2),
+        it: itLwbp.toFixed(2),
+      },
+      rataRata: avg.toFixed(2),
+      koreksi: {
+        ir: irCorrection.toFixed(2),
+        is: isCorrection.toFixed(2),
+        it: itCorrection.toFixed(2),
+      },
+    };
+
+    setWbp(hasil);
   };
 
-  const payload = {
-    category: "wbp",
-    title: "Menentukan WBP (Waktu Beban Puncak)",
-    description: `Hasil mengitung WBP (waktu Beban Puncak)`,
-    type: type,
-    value: {
-      lwbp: lwbp,
-      wbp: wbp,
-      selisih: `${(parseFloat(lwbp!) - wbp!).toFixed(2)} A`,
-    },
-    background: "bg-custom-error-3",
-  };
+  const payload = useMemo(() => {
+    if (!wbp) return null;
+
+    return {
+      category: "wbp",
+      title: "Menentukan WBP (Waktu Beban Puncak)",
+      description: `Hasil menghitung WBP (Waktu Beban Puncak)`,
+      type: type,
+      value: {
+        "LWBP per fasa": {
+          Ir: `${wbp.perFasa.ir} A`,
+          Is: `${wbp.perFasa.is} A`,
+          It: `${wbp.perFasa.it} A`,
+        },
+        "Rata-rata Arus per fasa": `${wbp.rataRata} A`,
+        Penjelasan: [
+          "• Faktor kali 66,7% digunakan untuk menghitung Penurunan Arus Per Phasa dari Waktu Beban Puncak (WBP) ke Arus Luar Waktu Beban Puncak (LWBP)",
+          "• Pemerataan dilakukan berdasarkan Arus yang sudah dikonversi dari WBP ke LWBP",
+          "• Maka yang harus dilakukan:",
+          `Ir dinaikkan sebesar ${wbp.koreksi.ir} A → menjadi ${wbp.rataRata} A`,
+          `Is dinaikkan sebesar ${wbp.koreksi.is} A → menjadi ${wbp.rataRata} A`,
+          `It diturunkan sebesar ${wbp.koreksi.it} A → menjadi ${wbp.rataRata} A`,
+        ],
+      },
+      background: "bg-custom-error-3",
+    };
+  }, [wbp, type]);
 
   const { generateNewHistory, isLoadingGenerate: isHistoryLoading } =
     useHistoryData({
@@ -55,11 +102,12 @@ const wbp = () => {
     });
 
   const saveHistory = () => {
-    if (wbp) {
-      generateNewHistory();
-    } else {
+    if (!wbp || !payload) {
       ToastAndroid.show("Hitung terlebih dahulu", ToastAndroid.SHORT);
+      return;
     }
+
+    generateNewHistory();
   };
   const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
   return (
@@ -97,14 +145,32 @@ const wbp = () => {
                       Rumus WBP:
                     </Text>
                     <Text className="text-base text-gray-700 font-artegra">
-                      Rumus WBP = LWBP (Luar Beban Waktu Puncak) × 166,7%
+                      Rata - rata pemerataan gardu = (Ir+Is+It)/3
+                    </Text>
+                    <Text className="text-base text-gray-700 font-artegra">
+                      Penjelasannya : Ir Is It adalah hasil pengukuran arus pada
+                      masing masing fasa yang terecord pada Amg
                     </Text>
                   </View>
                   <CustomInput
-                    title="Masukkan LWBP"
-                    value={lwbp}
-                    onChange={(text) => setLwbp(text)}
+                    title="Masukkan IR"
+                    value={ir}
+                    onChange={(text) => setIr(text)}
                     placeholder="Contoh: 10"
+                    keyboard="numeric"
+                  />
+                  <CustomInput
+                    title="Masukkan IS"
+                    value={is}
+                    onChange={(text) => setIs(text)}
+                    placeholder="Contoh: 12"
+                    keyboard="numeric"
+                  />
+                  <CustomInput
+                    title="Masukkan IT"
+                    value={it}
+                    onChange={(text) => setIt(text)}
+                    placeholder="Contoh: 11"
                     keyboard="numeric"
                   />
                   <CustomInput
@@ -114,38 +180,44 @@ const wbp = () => {
                     placeholder="Contoh: AL001"
                     keyboard="default"
                   />
-                  {wbp !== null && (
+                  {wbp && (
                     <View className="bg-gray-200 p-4 rounded-lg border border-gray-400 my-6 space-y-2">
                       <Text className="text-gray-800 text-lg mb-2 font-artegra-bold">
                         Hasil Perhitungan:
                       </Text>
 
                       <Text className="text-gray-700 text-base font-artegra">
-                        • LWBP = {parseFloat(lwbp)} A
+                        * LWBP PER PHASA:{"\n"}
+                        IR = {wbp.wbp} x 66,7% = {wbp.perFasa.ir}
+                        {"\n"}
+                        IS = {is} x 66,7% = {wbp.perFasa.is}
+                        {"\n"}
+                        IT = {it} x 66,7% = {wbp.perFasa.it}
                       </Text>
 
-                      <Text className="text-gray-700 text-base font-artegra">
-                        • WBP = {wbp.toFixed(2)} A {"\n"}• Selisih ={" "}
-                        {(parseFloat(lwbp) - wbp).toFixed(2)} A
+                      <Text className="text-gray-700 text-base font-artegra mt-2">
+                        * Rata-Rata Arus per fasa = ({wbp.perFasa.ir} +{" "}
+                        {wbp.perFasa.is} + {wbp.perFasa.it}) / 3 ={" "}
+                        {wbp.rataRata}
                       </Text>
 
-                      <Text className="text-sm text-gray-500 mt-2 font-artegra-italic">
-                        Penjelasan Hasil:
+                      <Text className="text-gray-700 text-base font-artegra mt-2">
+                        * Faktor kali 66,7% digunakan untuk menghitung Penurunan
+                        Arus Per Phasa dari WBP ke LWBP
                       </Text>
 
-                      <Text className="text-sm text-gray-600 font-artegra">
-                        • WBP adalah nilai arus pada waktu beban puncak,
-                        dihitung dari LWBP dengan mengalikannya sebesar 166,7%.{" "}
-                        {"\n"}• Nilai WBP digunakan untuk memperkirakan
-                        kapasitas arus maksimum saat sistem berada pada kondisi
-                        beban puncak. {"\n"}• Selisih antara LWBP dan WBP
-                        menunjukkan berapa besar peningkatan arus yang terjadi
-                        saat beban puncak dibandingkan dengan kondisi normal
-                        (luar beban puncak).
-                        {"\n"}• Nilai WBP yang jauh lebih tinggi dari LWBP
-                        menandakan sistem mengalami lonjakan arus saat puncak,
-                        yang perlu diperhatikan untuk menjaga kestabilan dan
-                        mencegah overloading pada gardu.
+                      <Text className="text-gray-700 text-base font-artegra mt-2">
+                        * Pemerataan dilakukan berdasarkan Arus yang sudah
+                        dikonversi dari WBP ke LWBP
+                      </Text>
+
+                      <Text className="text-gray-700 text-base font-artegra mt-2">
+                        * Jadi yang harus dilakukan:{"\n"}
+                        IR dinaikkan {wbp.koreksi.ir} menjadi {wbp.rataRata}
+                        {"\n"}
+                        IS dinaikkan {wbp.koreksi.is} menjadi {wbp.rataRata}
+                        {"\n"}
+                        IT diturunkan {wbp.koreksi.it} menjadi {wbp.rataRata}
                       </Text>
                     </View>
                   )}
