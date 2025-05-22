@@ -1,7 +1,6 @@
 import { currentUser, logout } from "@/redux/reducers";
 import { AppDispatch } from "@/redux/store";
 import { User } from "@/types/types";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ToastAndroid } from "react-native";

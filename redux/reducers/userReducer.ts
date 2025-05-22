@@ -4,12 +4,31 @@ import { User, UserResponse, UserState } from "@/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { uri } from "@/utils/uri";
 
+// Helper: Save token
+const saveToken = async (token: string) => {
+  try {
+    await AsyncStorage.setItem("token", token);
+  } catch (error) {
+    console.error("Error saving token:", error);
+  }
+};
+
+// Helper: Remove token
+const removeToken = async () => {
+  try {
+    await AsyncStorage.removeItem("token");
+  } catch (error) {
+    console.error("Error removing token:", error);
+  }
+};
+
 // register user
 export const register = createAsyncThunk<UserResponse, User>(
   "user/registrations",
   async (data, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${uri}/api/v1/register/user`, data);
+
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data);
@@ -23,6 +42,8 @@ export const login = createAsyncThunk<UserResponse, User>(
   async (data, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${uri}/api/v1/login`, data);
+      const token = response.data?.data?.token;
+      if (token) await saveToken(token);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data);
@@ -36,6 +57,7 @@ export const currentUser = createAsyncThunk<UserResponse, void>(
   async (_, { rejectWithValue }) => {
     try {
       const token = await AsyncStorage.getItem("token");
+      if (!token) throw new Error("No token found");
 
       const response = await axios.get(`${uri}/api/v1/current/user`, {
         headers: {
@@ -45,6 +67,9 @@ export const currentUser = createAsyncThunk<UserResponse, void>(
 
       return response.data;
     } catch (error: any) {
+      if (error?.response?.status === 401) {
+        await removeToken();
+      }
       return rejectWithValue(error.response?.data);
     }
   }
@@ -55,12 +80,43 @@ export const logout = createAsyncThunk<void, void>(
   "admin/logout",
   async (_, { rejectWithValue }) => {
     try {
-      await AsyncStorage.removeItem("token");
+      await removeToken();
     } catch (error: any) {
       return rejectWithValue("Failed to log out");
     }
   }
 );
+
+// Change password
+export const changePassword = createAsyncThunk<
+  UserResponse,
+  {
+    id: string;
+    currentPassword: string;
+    password: string;
+    reTypePassword: string;
+  },
+  { rejectValue: string }
+>("user/changePassword", async (data, { rejectWithValue }) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await axios.put(
+      `${uri}/api/v1/change/password/${data.id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Change password failed"
+    );
+  }
+});
 
 const initialState: UserState = {
   users: null,
@@ -104,12 +160,6 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.users = action.payload.data.user;
-        state.token = action.payload.data.token || "";
-        if (state.token) {
-          AsyncStorage.setItem("token", state.token).catch((error) =>
-            console.error("Error saving token:", error)
-          );
-        }
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -144,6 +194,28 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
         console.error("Logout error:", action.payload);
+      })
+
+      // change password
+      .addCase(changePassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload.data.user;
+
+        const token = action.payload.data.token;
+        if (token) {
+          AsyncStorage.setItem("token", token).catch((error) =>
+            console.error("Error saving token:", error)
+          );
+        }
+      })
+
+      .addCase(changePassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to change password";
       });
   },
 });

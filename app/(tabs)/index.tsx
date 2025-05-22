@@ -9,7 +9,12 @@ import {
   View,
 } from "react-native";
 import React, { useCallback, useEffect, useRef } from "react";
-import { ClockClockwise, Plugs, PlugsConnected } from "phosphor-react-native";
+import {
+  ClockClockwise,
+  LockKey,
+  Plugs,
+  PlugsConnected,
+} from "phosphor-react-native";
 import { Category } from "@/types/types";
 import { ThemedView } from "@/components/ThemedView";
 import CategoryItem from "@/components/CategoryItem";
@@ -111,12 +116,25 @@ const index = () => {
                       </Pressable>
                     )}
                   </View>
-                  <Pressable
-                    className="p-2 rounded-full bg-custom-error-1"
-                    onPress={handlePresentModalPress}
-                  >
-                    <PlugsConnected size={32} color="#de5757" />
-                  </Pressable>
+                  <View className="flex-row items-center gap-3">
+                    <Pressable
+                      className="p-2 rounded-full bg-gray-100"
+                      onPress={() =>
+                        router.push({
+                          pathname: "/screens/password",
+                          params: { id: user.userId },
+                        })
+                      }
+                    >
+                      <LockKey size={32} color="#4b5563" />
+                    </Pressable>
+                    <Pressable
+                      className="p-2 rounded-full bg-custom-error-1"
+                      onPress={handlePresentModalPress}
+                    >
+                      <PlugsConnected size={32} color="#de5757" />
+                    </Pressable>
+                  </View>
                 </View>
                 <View className="mt-[35px]">
                   <Text className="text-2xl text-custom-black-1 font-artegra-bold">
