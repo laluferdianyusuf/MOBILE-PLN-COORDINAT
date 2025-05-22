@@ -10,8 +10,14 @@ import CategoryItem from "@/components/CategoryItem";
 export const category: Category[] = [
   {
     id: "lwbp",
-    name: "LWBP \n (Luar waktu Beban Puncak)",
-    icon: <Lightning size={35} color="black" />,
+    name: "LWBP \n (Luar Waktu Beban Puncak)",
+    icon: (
+      <View className="flex-row items-center gap-2">
+        <Text className="font-artegra-bold">07.00</Text>
+        <Text className="font-artegra-bold">-</Text>
+        <Text className="font-artegra-bold">17.00</Text>
+      </View>
+    ),
     desc: "More about teacher",
     primary: "bg-custom-info-1",
     color: "bg-custom-error-1",
@@ -19,8 +25,14 @@ export const category: Category[] = [
   },
   {
     id: "wbp",
-    name: "WBP \n (Waktu beban Puncak)",
-    icon: <Lightning size={35} color="black" />,
+    name: "WBP \n (Waktu Beban Puncak)",
+    icon: (
+      <View className="flex-row items-center gap-2">
+        <Text className="font-artegra-bold">18.00</Text>
+        <Text className="font-artegra-bold">-</Text>
+        <Text className="font-artegra-bold">06.00</Text>
+      </View>
+    ),
     desc: "More about student",
     primary: "bg-custom-light-purple-1",
     color: "bg-custom-error-1",
