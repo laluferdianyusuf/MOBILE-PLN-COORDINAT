@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import { User, UserResponse, UserState } from "@/types/types";
+import {
+  MultiUserResponse,
+  User,
+  UserResponse,
+  UserState,
+} from "@/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { uri } from "@/utils/uri";
 
@@ -118,8 +123,62 @@ export const changePassword = createAsyncThunk<
   }
 });
 
+// Update url
+export const updateUrl = createAsyncThunk<
+  UserResponse,
+  {
+    id: string;
+    url: string;
+  },
+  { rejectValue: string }
+>("user/updateUrl", async (data, { rejectWithValue }) => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const response = await axios.put(
+      `${uri}/api/v1/update/url/${data.id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(
+      error.response?.data?.message || "Change password failed"
+    );
+  }
+});
+
+// Get all users
+export const getAllUsers = createAsyncThunk<MultiUserResponse, void>(
+  "all/users",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+
+      const response = await axios.get(`${uri}/api/v1/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error: any) {
+      if (error?.response?.status === 401) {
+        await removeToken();
+      }
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
 const initialState: UserState = {
   users: null,
+  allUsers: [],
   token: null,
   loading: false,
   error: null,
@@ -216,6 +275,34 @@ const authSlice = createSlice({
       .addCase(changePassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to change password";
+      })
+
+      // update url
+      .addCase(updateUrl.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUrl.fulfilled, (state, action) => {
+        state.loading = false;
+        state.users = action.payload.data.user;
+      })
+      .addCase(updateUrl.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to add url";
+      })
+
+      // All users states
+      .addCase(getAllUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allUsers = action.payload.data.user;
+      })
+      .addCase(getAllUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });

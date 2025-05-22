@@ -1,4 +1,4 @@
-import { currentUser, logout } from "@/redux/reducers";
+import { currentUser, getAllUsers, logout } from "@/redux/reducers";
 import { AppDispatch } from "@/redux/store";
 import { User } from "@/types/types";
 import { router } from "expo-router";
@@ -14,12 +14,37 @@ export function useUserData({ id, closeModal }: UserDataProps) {
   const [user, setUser] = useState<User>({});
   const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
 
   const validateUser = async () => {
     setIsLoading(true);
     try {
       const res = await dispatch(currentUser()).unwrap();
       setUser(res.data.user);
+    } catch (error) {
+      ToastAndroid.show(
+        "Gagal memuat pengguna buka ulang aplikasi",
+        ToastAndroid.SHORT
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const validateAllUsers = async () => {
+    setIsLoading(true);
+    try {
+      const res = await dispatch(getAllUsers()).unwrap();
+      if (res.data) {
+        if (Array.isArray(res.data.user)) {
+          setAllUsers(res.data.user);
+        } else if (Array.isArray(res.data)) {
+          setAllUsers(res.data);
+        } else {
+          setAllUsers([]);
+        }
+      } else {
+        setAllUsers([]);
+      }
     } catch (error) {
       ToastAndroid.show(
         "Gagal memuat pengguna buka ulang aplikasi",
@@ -48,7 +73,9 @@ export function useUserData({ id, closeModal }: UserDataProps) {
 
   return {
     validateUser,
+    validateAllUsers,
     user,
+    allUsers,
     isLoading,
     handleLogout,
   };

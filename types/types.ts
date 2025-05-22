@@ -59,10 +59,12 @@ export interface User {
   address?: string;
   password?: string;
   role?: string;
+  url?: string;
 }
 
 export interface UserState {
   users: User | null;
+  allUsers: User[] | null;
   token: string | null;
   loading: boolean;
   error: string | null;
@@ -76,6 +78,14 @@ export interface UserResponse {
   token: string | null;
   status: boolean;
   message: string | null;
+}
+
+export interface MultiUserResponse {
+  status: boolean;
+  message: string;
+  data: {
+    user: User[];
+  };
 }
 
 // History state

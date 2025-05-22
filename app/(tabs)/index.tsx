@@ -117,17 +117,19 @@ const index = () => {
                     )}
                   </View>
                   <View className="flex-row items-center gap-3">
-                    <Pressable
-                      className="p-2 rounded-full bg-gray-100"
-                      onPress={() =>
-                        router.push({
-                          pathname: "/screens/password",
-                          params: { id: user.userId },
-                        })
-                      }
-                    >
-                      <LockKey size={32} color="#4b5563" />
-                    </Pressable>
+                    {user.role !== "guest" && (
+                      <Pressable
+                        className="p-2 rounded-full bg-gray-100"
+                        onPress={() =>
+                          router.push({
+                            pathname: "/screens/password",
+                            params: { id: user.userId },
+                          })
+                        }
+                      >
+                        <LockKey size={32} color="#4b5563" />
+                      </Pressable>
+                    )}
                     <Pressable
                       className="p-2 rounded-full bg-custom-error-1"
                       onPress={handlePresentModalPress}
