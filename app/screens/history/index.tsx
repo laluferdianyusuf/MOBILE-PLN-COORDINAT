@@ -152,6 +152,12 @@ export default function HistoryList() {
             ? "wbp"
             : item.category === "maps"
             ? "maps"
+            : item.category === "saidi"
+            ? "saidi"
+            : item.category === "saifi"
+            ? "saifi"
+            : item.category === "ens"
+            ? "ens"
             : item.category === "mcb_1_phase"
             ? "1 phase"
             : "3 phase"}

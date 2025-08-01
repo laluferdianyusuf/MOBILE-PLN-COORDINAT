@@ -149,7 +149,11 @@ const index = () => {
               </ImageBackground>
               <View className="flex-1 bg-white px-6 py-6">
                 <FlatList
-                  data={category}
+                  data={
+                    user.role === "guest"
+                      ? category.filter((item) => item.id !== "single_line")
+                      : category
+                  }
                   renderItem={({ item, index }) => (
                     <CategoryItem
                       item={item}
