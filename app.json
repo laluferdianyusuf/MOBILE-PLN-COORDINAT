@@ -2,7 +2,7 @@
   "expo": {
     "name": "PEKA Listrik",
     "slug": "frontend",
-    "version": "1.2.1",
+    "version": "2.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -37,6 +37,16 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "targetSdkVersion": 35,
+            "compileSdkVersion": 35,
+            "minSdkVersion": 24
+          }
         }
       ]
     ],

@@ -2,6 +2,7 @@ import { Category } from "@/types/types";
 import {
   BezierCurve,
   CarBattery,
+  Circuitry,
   Compass,
   Intersection,
   LineSegment,
@@ -58,12 +59,21 @@ export const category: Category[] = [
   },
   {
     id: "balancer",
-    name: "Penyeimbang Beban gardu",
+    name: "Penyeimbang Beban Gardu",
     icon: <BezierCurve size={35} color="black" />,
     desc: "More about calendar",
     primary: "bg-custom-indigo-1",
     color: "bg-custom-grey-5",
     uri: "/(category)/balancer",
+  },
+  {
+    id: "energy",
+    name: "Keandalan Distribusi",
+    icon: <Circuitry size={35} color="black" />,
+    desc: "More about calendar",
+    primary: "bg-custom-indigo-1",
+    color: "bg-custom-grey-5",
+    uri: "/(category)/energy",
   },
   {
     id: "single_line",

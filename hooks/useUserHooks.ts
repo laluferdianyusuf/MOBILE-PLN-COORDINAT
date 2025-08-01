@@ -26,10 +26,12 @@ export function useUserData({ id, closeModal }: UserDataProps) {
         "Gagal memuat pengguna buka ulang aplikasi",
         ToastAndroid.SHORT
       );
+      router.replace({ pathname: "/screens/home" });
     } finally {
       setIsLoading(false);
     }
   };
+
   const validateAllUsers = async () => {
     setIsLoading(true);
     try {
@@ -50,6 +52,7 @@ export function useUserData({ id, closeModal }: UserDataProps) {
         "Gagal memuat pengguna buka ulang aplikasi",
         ToastAndroid.SHORT
       );
+      router.replace({ pathname: "/screens/home" });
     } finally {
       setIsLoading(false);
     }

@@ -21,7 +21,11 @@ export interface Category {
     | "/(category)/table"
     | "/(category)/diagram"
     | "/(category)/balancer/lwbp"
-    | "/(category)/balancer/wbp";
+    | "/(category)/balancer/wbp"
+    | "/(category)/energy"
+    | "/(category)/energy/saidi"
+    | "/(category)/energy/saifi"
+    | "/(category)/energy/ens";
 }
 
 export interface Home {
@@ -101,7 +105,10 @@ export interface History {
     | "fuse_link_branch"
     | "nh_fuse_substation"
     | "lwbp"
-    | "wbp";
+    | "wbp"
+    | "saidi"
+    | "saifi"
+    | "ens";
   title?: string;
   description?: string;
   type?: string;
