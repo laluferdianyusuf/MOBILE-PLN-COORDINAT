@@ -202,7 +202,7 @@ export default function AngleMapScreen() {
       points: currentLocation,
       address: addressName,
       angle: `${angle}°`,
-      tm: `Berdasarkan titik GPS yg anda input, maka konstruksi yang seharusnya terpasang adalah ${tm}`,
+      tm: tm,
     },
     background: "bg-custom-light-blue-1",
   };

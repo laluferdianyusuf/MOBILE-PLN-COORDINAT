@@ -22,8 +22,8 @@ import { LoadingWave } from "@/components";
 const ENSPage = () => {
   const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
   const { user, validateUser, isLoading } = useUserData({});
-  const [dayaPadam, setDayaPadam] = useState("");
-  const [lamaPadam, setLamaPadam] = useState("");
+  const [totalKwh, setTotalKwh] = useState("");
+  const [lamaPadamJam, setLamaPadamJam] = useState("");
   const [result, setResult] = useState<number | null>(null);
 
   useEffect(() => {
@@ -31,15 +31,15 @@ const ENSPage = () => {
   }, []);
 
   const handleCalculate = () => {
-    const daya = parseFloat(dayaPadam);
-    const lama = parseFloat(lamaPadam);
+    const kwh = parseFloat(totalKwh);
+    const lama = parseFloat(lamaPadamJam);
 
-    if (isNaN(daya) || isNaN(lama)) {
+    if (isNaN(kwh) || isNaN(lama)) {
       ToastAndroid.show("Input tidak valid", ToastAndroid.SHORT);
       return;
     }
 
-    const ens = (daya * lama) / 60;
+    const ens = (lama * kwh) / 1000;
     setResult(ens);
   };
 
@@ -49,8 +49,8 @@ const ENSPage = () => {
     description: "Perhitungan Energy Not Supplied (ENS)",
     type: "indeks-gangguan",
     value: {
-      daya_padam_kw: dayaPadam,
-      lama_padam_menit: lamaPadam,
+      lama_padam_jam: lamaPadamJam,
+      total_kwh_padam: totalKwh,
       hasil_ens_mwh: result,
     },
     background: "bg-blue-100",
@@ -77,7 +77,7 @@ const ENSPage = () => {
         style={[StyleSheet.absoluteFill, { width: SCREEN_W, height: SCREEN_H }]}
       >
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
           keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         >
@@ -103,23 +103,23 @@ const ENSPage = () => {
                       Energy Not Supplied (ENS)
                     </Text>
                     <Text className="text-blue-700 font-artegra">
-                      Rumus: (Daya Padam × Lama Padam) ÷ 60
+                      Rumus: (Waktu Padam × Total kWh Padam) ÷ 1000
                     </Text>
                   </View>
 
                   <CustomInput
-                    title="Daya Padam (kW)"
-                    value={dayaPadam}
-                    onChange={setDayaPadam}
-                    placeholder="Contoh: 1000"
+                    title="Total kWh Padam"
+                    value={totalKwh}
+                    onChange={setTotalKwh}
+                    placeholder="Contoh: 5000"
                     keyboard="numeric"
                   />
 
                   <CustomInput
-                    title="Lama Padam (menit)"
-                    value={lamaPadam}
-                    onChange={setLamaPadam}
-                    placeholder="Contoh: 120"
+                    title="Waktu Padam (jam)"
+                    value={lamaPadamJam}
+                    onChange={setLamaPadamJam}
+                    placeholder="Contoh: 2"
                     keyboard="numeric"
                   />
                 </View>
@@ -131,28 +131,29 @@ const ENSPage = () => {
                     </Text>
 
                     <Text className="font-artegra text-black">
-                      <Text className="font-bold">Rumus:</Text> (Daya Padam ×
-                      Lama Padam) ÷ 60
+                      <Text className="font-bold">Rumus:</Text> (Waktu Padam ×
+                      Total kWh Padam) ÷ 1000
                     </Text>
 
                     <Text className="font-artegra text-black">
-                      <Text className="font-bold">Daya Padam</Text>: {dayaPadam}{" "}
-                      kW
+                      <Text className="font-bold">Waktu Padam</Text>:{" "}
+                      {lamaPadamJam} jam
                     </Text>
 
                     <Text className="font-artegra text-black">
-                      <Text className="font-bold">Lama Padam</Text>: {lamaPadam}{" "}
-                      menit
+                      <Text className="font-bold">Total kWh Padam</Text>:{" "}
+                      {totalKwh} kWh
                     </Text>
 
                     <Text className="font-artegra text-black">
                       <Text className="font-bold">Perhitungan:</Text>{" "}
-                      {dayaPadam} × {lamaPadam} ÷ 60 = {result.toFixed(2)} kWh
+                      {lamaPadamJam} × {totalKwh} ÷ 1000 = {result.toFixed(2)}{" "}
+                      MWh
                     </Text>
 
                     <Text className="font-artegra text-black">
                       <Text className="font-bold">Penjelasan:</Text> Hasil ini
-                      menunjukkan total energi (dalam kWh) yang tidak disuplai
+                      menunjukkan total energi (dalam MWh) yang tidak disuplai
                       akibat gangguan listrik. Nilai ini penting untuk
                       mengevaluasi dampak terhadap konsumen.
                     </Text>

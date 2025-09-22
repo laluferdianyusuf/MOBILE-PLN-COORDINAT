@@ -133,7 +133,6 @@ export function useHistoryData({
         error?.message || "Gagal menghapus riwayat",
         ToastAndroid.SHORT
       );
-      console.log(error);
     } finally {
       closeModal?.();
       setIsLoading(false);

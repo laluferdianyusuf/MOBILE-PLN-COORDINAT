@@ -44,6 +44,14 @@ export default function HistoryList() {
   // ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  const handleCloseModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.dismiss();
+  }, []);
+
   const {
     validateHistoryByUserId,
     history,
@@ -52,6 +60,7 @@ export default function HistoryList() {
   } = useHistoryData({
     user_id: user.userId,
     id: selectedItems,
+    closeModal: handleCloseModalPress,
   });
 
   useEffect(() => {
@@ -178,14 +187,6 @@ export default function HistoryList() {
     acc[group].push(item);
     return acc;
   }, {} as Record<string, History[]>);
-
-  // callbacks
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-  const handleCloseModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.dismiss();
-  }, []);
 
   return (
     <ThemedView className={`flex-1`}>
