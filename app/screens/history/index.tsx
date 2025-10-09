@@ -31,25 +31,35 @@ import {
 import CustomModal from "@/components/CustomModal";
 import EmptyItem from "@/components/EmptyItem";
 import { generateAndShareExcel } from "@/utils/exportExcel";
+import CustomModalUsers from "@/components/CustomModalUsers";
 
 moment.locale("id");
 
 export default function HistoryList() {
-  const { user, validateUser } = useUserData({});
+  const { user, validateUser, validateAllUsers, allUsers } = useUserData({});
   const router = useRouter();
+
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [query, setQuery] = useState<string>("");
   const [filteredData, setFilteredData] = useState<History[]>([]);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
 
-  // ref
+  // modal refs
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetUserRef = useRef<BottomSheetModal>(null);
 
-  // callbacks
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
   }, []);
   const handleCloseModalPress = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
+  }, []);
+  const handleOpenUserModal = useCallback(() => {
+    bottomSheetUserRef.current?.present();
+  }, []);
+  const handleCloseUserModal = useCallback(() => {
+    bottomSheetUserRef.current?.dismiss();
   }, []);
 
   const {
@@ -58,25 +68,43 @@ export default function HistoryList() {
     isLoading: isHistoryLoading,
     deleteHistories,
   } = useHistoryData({
-    user_id: user.userId,
+    user_id: selectedUser || user.userId,
     id: selectedItems,
     closeModal: handleCloseModalPress,
   });
 
   useEffect(() => {
     validateUser();
+    validateAllUsers();
   }, []);
 
   useEffect(() => {
-    validateHistoryByUserId();
-  }, [user.userId]);
+    if (user?.userId) {
+      setSelectedUser(user.userId);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (selectedUser) {
+      setIsFetching(true);
+      setFilteredData([]);
+      validateHistoryByUserId().finally(() => {
+        setIsFetching(false);
+      });
+    }
+  }, [selectedUser]);
 
   useEffect(() => {
     if (query.trim() === "") {
       setFilteredData(history);
     } else {
-      const filtered = history.filter((item) =>
-        item.category!.toLowerCase().includes(query.toLowerCase())
+      const q = query.toLowerCase();
+      const filtered = history.filter(
+        (item) =>
+          (item.category ?? "").toLowerCase().includes(q) ||
+          (item.description ?? "").toLowerCase().includes(q) ||
+          (item.title ?? "").toLowerCase().includes(q) ||
+          (item.type ?? "").toLowerCase().includes(q)
       );
       setFilteredData(filtered);
     }
@@ -120,6 +148,7 @@ export default function HistoryList() {
               ? "bg-custom-info-1 border-custom-info-2"
               : "bg-white border-gray-300"
           } `}
+          disabled={user.role !== "supervisor"}
         />
         <View>
           <Text
@@ -188,77 +217,121 @@ export default function HistoryList() {
     return acc;
   }, {} as Record<string, History[]>);
 
+  const mapUserName = (name: string) => {
+    switch (name) {
+      case "Supervisor":
+        return "SUPER ADMIN";
+      case "ULP 1":
+        return "ULP ALAS";
+      case "ULP 2":
+        return "ULP TALIWANG";
+      case "ULP 3":
+        return "ULP SAMAWAREA";
+      case "ULP 4":
+        return "EMPANG";
+      default:
+        return "User";
+    }
+  };
+
   return (
     <ThemedView className={`flex-1`}>
       <GestureHandlerRootView className="flex-1 justify-center">
         <BottomSheetModalProvider>
           <View className="pt-16 pb-6 px-6 flex-1">
+            {/* Header */}
             <View className="flex-row items-center justify-between pb-4">
               <BackButton onBack={() => router.back()} />
               <Text className="font-artegra text-xl">Riwayat</Text>
             </View>
+
+            {/* Search */}
             <View className="flex-row items-center border border-gray-300 rounded-2xl px-4 py-2 mb-4">
               <TextInput
-                className="ml-2 flex-1 text-sm text-gray-300"
-                placeholder="Cari kategori..."
+                className="ml-2 flex-1 text-sm text-gray-600"
+                placeholder="Cari data yang dibutuhkan..."
                 placeholderTextColor={"#d1d5db"}
                 value={query}
                 onChangeText={setQuery}
               />
               <MagnifyingGlass size={20} color="#d1d5db" />
             </View>
-            <View className=" pb-3 flex-row justify-between">
+
+            {/* Actions */}
+            <View className="pb-3 flex-row justify-between">
               <View className="items-center flex-row gap-3">
-                <Pressable
-                  disabled={selectedItems.length < 1}
-                  onPress={handlePresentModalPress}
-                  className={`rounded-full border flex-row gap-1 items-center justify-center border-custom-error-1 px-2 ${
-                    selectedItems.length > 0
-                      ? "bg-custom-error-2 opacity-100"
-                      : "bg-custom-error-1 opacity-50"
-                  }`}
-                >
-                  <Trash
-                    size={10}
-                    color={`${selectedItems.length > 0 ? "white" : "#de5757"}`}
-                  />
-                  <Text
-                    className={`font-artegra text-xs capitalize ${
+                {user.role === "supervisor" && (
+                  <Pressable
+                    disabled={selectedItems.length < 1}
+                    onPress={handlePresentModalPress}
+                    className={`rounded-full border flex-row gap-1 items-center justify-center border-custom-error-1 px-2 ${
                       selectedItems.length > 0
-                        ? "text-white"
-                        : "text-custom-error-2"
+                        ? "bg-custom-error-2 opacity-100"
+                        : "bg-custom-error-1 opacity-50"
                     }`}
                   >
-                    hapus
-                  </Text>
-                </Pressable>
+                    <Trash
+                      size={10}
+                      color={`${
+                        selectedItems.length > 0 ? "white" : "#de5757"
+                      }`}
+                    />
+                    <Text
+                      className={`font-artegra text-xs capitalize ${
+                        selectedItems.length > 0
+                          ? "text-white"
+                          : "text-custom-error-2"
+                      }`}
+                    >
+                      hapus
+                    </Text>
+                  </Pressable>
+                )}
+
                 <Pressable
                   onPress={() => generateAndShareExcel(filteredData)}
                   className={`rounded-full border flex-row gap-1 items-center justify-center bg-custom-success-1 border-custom-success-2 px-2`}
                 >
                   <FileXls size={10} color={`#47a855`} />
-                  <Text
-                    className={`font-artegra text-xs capitalize text-custom-success-2`}
-                  >
+                  <Text className="font-artegra text-xs capitalize text-custom-success-2">
                     excel
                   </Text>
                 </Pressable>
-              </View>
-              <View className="items-center self-end flex-row-reverse gap-3">
+
                 <Pressable
-                  onPress={toggleSelectAll}
-                  className={`w-5 h-5 rounded-full border  ${
-                    selectedItems.length === filteredData.length
-                      ? "bg-custom-info-1 border-custom-info-2"
-                      : "bg-white border-gray-300"
-                  }`}
-                />
-                <Text className="font-artegra text-xs text-gray-400">
-                  Semua
-                </Text>
+                  onPress={handleOpenUserModal}
+                  className={`rounded-full border flex-row gap-1 items-center justify-center bg-blue-100 border-blue-300 px-2`}
+                  disabled={user.role !== "supervisor"}
+                >
+                  <Text className="font-artegra text-xs capitalize text-blue-500">
+                    {selectedUser
+                      ? mapUserName(
+                          allUsers.find((u) => u.userId === selectedUser)
+                            ?.name || "User"
+                        )
+                      : "User"}
+                  </Text>
+                </Pressable>
               </View>
+              {user.role === "supervisor" && (
+                <View className="items-center self-end flex-row-reverse gap-3">
+                  <Pressable
+                    onPress={toggleSelectAll}
+                    className={`w-5 h-5 rounded-full border  ${
+                      selectedItems.length === filteredData.length &&
+                      filteredData.length > 0
+                        ? "bg-custom-info-1 border-custom-info-2"
+                        : "bg-white border-gray-300"
+                    }`}
+                  />
+                  <Text className="font-artegra text-xs text-gray-400">
+                    Semua
+                  </Text>
+                </View>
+              )}
             </View>
-            {isHistoryLoading ? (
+
+            {isFetching || isHistoryLoading ? (
               <LoadingWave />
             ) : filteredData.length > 0 ? (
               <ScrollView showsVerticalScrollIndicator={false}>
@@ -311,6 +384,57 @@ export default function HistoryList() {
             ref={bottomSheetModalRef}
             icon={<Trash size={50} color="#de5757" />}
           />
+
+          <CustomModalUsers
+            onSubmit={() => {}}
+            onClose={handleCloseUserModal}
+            title="Pilih User"
+            description="Pilih salah satu user untuk melihat riwayatnya"
+            submitText=""
+            cancelText="Tutup"
+            ref={bottomSheetUserRef}
+            icon={<></>}
+          >
+            <FlatList
+              data={allUsers.filter((u) =>
+                ["Supervisor", "ULP 1", "ULP 2", "ULP 3", "ULP 4"].includes(
+                  u.name ?? ""
+                )
+              )}
+              keyExtractor={(u) => String(u.id)}
+              numColumns={2}
+              contentContainerStyle={{ paddingVertical: 10 }}
+              columnWrapperStyle={{ gap: 10, justifyContent: "flex-start" }}
+              renderItem={({ item: u }) => {
+                const label =
+                  u.name === "Supervisor"
+                    ? "SUPER ADMIN"
+                    : u.name === "ULP 1"
+                    ? "ULP ALAS"
+                    : u.name === "ULP 2"
+                    ? "ULP TALIWANG"
+                    : u.name === "ULP 3"
+                    ? "ULP SAMAWAREA"
+                    : u.name === "ULP 4"
+                    ? "EMPANG"
+                    : null;
+
+                return (
+                  <Pressable
+                    onPress={() => {
+                      setSelectedUser(u.userId as string);
+                      handleCloseUserModal();
+                    }}
+                    className="flex-1 p-3 rounded-xl mb-3 bg-gray-100"
+                  >
+                    <Text className="text-sm capitalize font-artegra text-center">
+                      {label}
+                    </Text>
+                  </Pressable>
+                );
+              }}
+            />
+          </CustomModalUsers>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </ThemedView>

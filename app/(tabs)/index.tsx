@@ -140,7 +140,19 @@ const index = () => {
                 </View>
                 <View className="mt-[35px]">
                   <Text className="text-2xl text-custom-black-1 font-artegra-bold">
-                    Hi {user.name},{" "}
+                    Hi{" "}
+                    {user.name === "Supervisor"
+                      ? "SUPER ADMIN"
+                      : user.name === "ULP 1"
+                      ? "ULP ALAS"
+                      : user.name === "ULP 2"
+                      ? "ULP TALIWANG"
+                      : user.name === "ULP 3"
+                      ? "ULP SAMAWAREA"
+                      : user.name === "ULP 4"
+                      ? "ULP EMPANG"
+                      : "Guest"}
+                    ,{" "}
                   </Text>
                   <Text className="text-2xl font-artegra-bold text-custom-black-1">
                     Pilih fitur yang kamu butuhkan.

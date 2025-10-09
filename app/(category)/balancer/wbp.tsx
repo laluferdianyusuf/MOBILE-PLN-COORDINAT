@@ -46,7 +46,7 @@ const wbp = () => {
 
     const irCorrection = avg - irLwbp;
     const isCorrection = avg - isLwbp;
-    const itCorrection = itLwbp - avg;
+    const itCorrection = avg - itLwbp;
 
     const hasil = {
       lwbp: irLwbp.toFixed(2),
@@ -77,18 +77,36 @@ const wbp = () => {
       type: type,
       value: {
         "LWBP per fasa": {
-          Ir: `${wbp.perFasa.ir} A`,
-          Is: `${wbp.perFasa.is} A`,
-          It: `${wbp.perFasa.it} A`,
+          Ir: `${wbp.perFasa.ir}`,
+          Is: `${wbp.perFasa.is}`,
+          It: `${wbp.perFasa.it}`,
         },
         "Rata-rata Arus per fasa": `${wbp.rataRata} A`,
         Penjelasan: [
           "• Faktor kali 66,7% digunakan untuk menghitung Penurunan Arus Per Phasa dari Waktu Beban Puncak (WBP) ke Arus Luar Waktu Beban Puncak (LWBP)",
           "• Pemerataan dilakukan berdasarkan Arus yang sudah dikonversi dari WBP ke LWBP",
           "• Maka yang harus dilakukan:",
-          `Ir dinaikkan sebesar ${wbp.koreksi.ir} A → menjadi ${wbp.rataRata} A`,
-          `Is dinaikkan sebesar ${wbp.koreksi.is} A → menjadi ${wbp.rataRata} A`,
-          `It diturunkan sebesar ${wbp.koreksi.it} A → menjadi ${wbp.rataRata} A`,
+          `${
+            wbp.koreksi.ir > 0
+              ? "Ir dinaikkan"
+              : wbp.koreksi.ir < 0
+              ? "Ir diturunkan"
+              : "Ir tidak perlu diubah"
+          } sebesar ${Math.abs(wbp.koreksi.ir)} A → menjadi ${wbp.rataRata} A`,
+          `${
+            wbp.koreksi.is > 0
+              ? "Is dinaikkan"
+              : wbp.koreksi.is < 0
+              ? "Is diturunkan"
+              : "Is tidak perlu diubah"
+          } sebesar ${Math.abs(wbp.koreksi.is)} A → menjadi ${wbp.rataRata} A`,
+          `${
+            wbp.koreksi.it > 0
+              ? "It dinaikkan"
+              : wbp.koreksi.it < 0
+              ? "It diturunkan"
+              : "It tidak perlu diubah"
+          } sebesar ${Math.abs(wbp.koreksi.it)} A → menjadi ${wbp.rataRata} A`,
         ],
       },
       background: "bg-custom-error-3",
@@ -213,11 +231,29 @@ const wbp = () => {
 
                       <Text className="text-gray-700 text-base font-artegra mt-2">
                         * Jadi yang harus dilakukan:{"\n"}
-                        IR dinaikkan {wbp.koreksi.ir} menjadi {wbp.rataRata}
+                        IR{" "}
+                        {wbp.koreksi.ir > 0
+                          ? "dinaikkan"
+                          : wbp.koreksi.ir < 0
+                          ? "diturunkan"
+                          : "dinaikkan"}{" "}
+                        {Math.abs(wbp.koreksi.ir)} menjadi {wbp.rataRata}
                         {"\n"}
-                        IS dinaikkan {wbp.koreksi.is} menjadi {wbp.rataRata}
+                        IS{" "}
+                        {wbp.koreksi.is > 0
+                          ? "dinaikkan"
+                          : wbp.koreksi.is < 0
+                          ? "diturunkan"
+                          : "dinaikkan"}{" "}
+                        {Math.abs(wbp.koreksi.is)} menjadi {wbp.rataRata}
                         {"\n"}
-                        IT diturunkan {wbp.koreksi.it} menjadi {wbp.rataRata}
+                        IT{" "}
+                        {wbp.koreksi.it > 0
+                          ? "dinaikkan"
+                          : wbp.koreksi.it < 0
+                          ? "diturunkan"
+                          : "dinaikkan"}{" "}
+                        {Math.abs(wbp.koreksi.it)} menjadi {wbp.rataRata}
                       </Text>
                     </View>
                   )}

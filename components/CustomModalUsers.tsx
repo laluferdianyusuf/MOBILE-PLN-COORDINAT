@@ -20,7 +20,7 @@ interface CustomModalProps {
   children?: ReactNode;
 }
 
-const CustomModal = forwardRef<BottomSheetModal, CustomModalProps>(
+const CustomModalUsers = forwardRef<BottomSheetModal, CustomModalProps>(
   (
     {
       onSubmit,
@@ -57,22 +57,15 @@ const CustomModal = forwardRef<BottomSheetModal, CustomModalProps>(
         backdropComponent={renderBackdrop}
         onChange={onChange}
       >
-        <BottomSheetView className="items-center py-5 px-5">
-          <View className="p-4 bg-custom-error-1 rounded-full mb-5">
-            {icon}
-          </View>
-          <Text className="font-artegra-bold text-xl mb-3">{title}</Text>
+        <BottomSheetView className="py-5 px-5">
+          <Text className="font-artegra-bold text-xl mb-3 text-center">
+            {title}
+          </Text>
           <Text className="font-artegra text-gray-500 text-sm text-center mb-5">
             {description}
           </Text>
-          {children ? <View className="mb-4">{children}</View> : null}
+          {children}
           <View className="gap-4 flex-col w-full">
-            <Pressable
-              className="bg-custom-error-2 items-center justify-center py-3 rounded-full"
-              onPress={onSubmit}
-            >
-              <Text className="font-artegra-bold text-white">{submitText}</Text>
-            </Pressable>
             <Pressable
               className="py-3 items-center justify-center"
               onPress={onClose}
@@ -88,4 +81,4 @@ const CustomModal = forwardRef<BottomSheetModal, CustomModalProps>(
   }
 );
 
-export default CustomModal;
+export default CustomModalUsers;

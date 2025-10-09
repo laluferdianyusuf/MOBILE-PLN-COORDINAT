@@ -80,6 +80,12 @@ const FuseLinkPercabangan = () => {
       ToastAndroid.show("Hitung terlebih dahulu", ToastAndroid.SHORT);
     }
   };
+  const ulpPlaceholderMap: Record<string, string> = {
+    "ULP 1": "FCO Alas",
+    "ULP 2": "FCO Taliwang",
+    "ULP 3": "FCO Samawarea",
+    "ULP 4": "FCO Empang",
+  };
 
   const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
   return (
@@ -107,7 +113,8 @@ const FuseLinkPercabangan = () => {
                   onPress={handleAddTrafo}
                   text="+"
                   className="px-2 p-0 bg-transparent"
-                  textClass="text-black text-2xl"
+                  textClass="text-transparent text-2xl"
+                  isDisable={true}
                 />
               </View>
               <ScrollView
@@ -139,7 +146,7 @@ const FuseLinkPercabangan = () => {
                   {trafoValues.map((val, idx) => (
                     <CustomInput
                       key={idx}
-                      title={`Kapasitas Trafo ${idx + 1} (VA)`}
+                      title={`Kapasitas Trafo (VA)`}
                       value={val}
                       onChange={(text) => handleTrafoChange(text, idx)}
                       placeholder="Contoh: 50000"
@@ -158,7 +165,9 @@ const FuseLinkPercabangan = () => {
                     title="Nama Percabangan"
                     value={type}
                     onChange={(text) => setType(text)}
-                    placeholder="Contoh: FCO Alas Kota"
+                    placeholder={`Contoh: ${
+                      ulpPlaceholderMap[user?.name!] || "FCO ..."
+                    }`}
                     keyboard="default"
                   />
                   {result !== null && (
